@@ -1,0 +1,56 @@
+/* Register.css */
+
+.register-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: calc(100vh - 60px); /* Full height minus the navbar height */
+	
+	
+  }
+  
+  form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	width: 600px; /* Adjusted width to fit wider input fields */
+  }
+  
+  .form-row {
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+  }
+  
+  input, select {
+	width: 100%;
+	padding: 5px; /* Reduced padding for smaller height */
+	margin-bottom: 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 10px;
+  }
+  
+  .form-row input {
+	width: 48%; /* Two inputs per row */
+  }
+  
+  button {
+	width: 100%;
+	padding: 10px;
+	background-color: #333; /* Dark gray background */
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 16px;
+  }
+  
+  button:hover {
+	background-color: #555; /* Slightly lighter gray on hover */
+  }
+  

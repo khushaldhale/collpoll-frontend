@@ -1,0 +1,62 @@
+/* Lab.css */
+
+.lab-container {
+	display: flex;
+	justify-content: space-between;
+  }
+  
+  .lab-list {
+	flex: 1;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+  }
+  
+  .lab-card {
+	flex: 0 1 calc(33.33% - 20px); /* Adjust to fit 3 cards in a row with 20px gap */
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	padding: 15px;
+  }
+  
+  .lab-card p {
+	margin-bottom: 10px;
+  }
+  
+  .lab-card button {
+	display: block;
+	margin-top: 10px;
+	padding: 8px 12px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	background-color: #333;
+	color: #fff;
+  }
+  
+  .lab-card button:hover {
+	background-color: #555;
+  }
+  
+  .add-lab {
+	margin-top: 20px; /* Adjust as needed */
+	padding: 20px;
+	background-color: #f0f0f0;
+	text-align: center;
+  }
+  
+  .add-lab button {
+	width: 100%;
+	padding: 10px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	background-color: #333;
+	color: #fff;
+  }
+  
+  .add-lab button:hover {
+	background-color: #555;
+  }
+  

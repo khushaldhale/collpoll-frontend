@@ -1,0 +1,43 @@
+/* NavBar.css */
+
+.navbar {
+	position: fixed;
+	top: 0;
+	width: 100%;
+	height: 37px;
+	background-color: #554e4e; /* Primary color */
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	z-index: 1000;
+  }
+  
+  .navbar-container {
+	width: 100%;
+	max-width: 1200px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 20px;
+  }
+  
+  .navbar-brand {
+	font-size: 1.1rem;
+	font-weight: 500;
+	color: white;
+	text-decoration: none;
+  }
+  
+  .navbar-links a{
+	color: white;
+	text-decoration: none;
+	margin-left: 20px;
+	font-size: 11px;
+  }
+  
+  .navbar-links a:hover {
+	text-decoration: underline;
+  }
+  

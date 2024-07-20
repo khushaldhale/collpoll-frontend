@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { deleteTopic, topicBySub } from "../../redux/slices/topicSlice";
-import "./Topics.css";
 
 const Topics = () => {
   const topics = useSelector((state) => {

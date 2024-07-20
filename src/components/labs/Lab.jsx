@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { deleteLab, getAllLabs } from "../../redux/slices/labSlice";
-import "./Lab.css";
 
 const Lab = () => {
   const labs = useSelector((state) => {
@@ -11,13 +10,14 @@ const Lab = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   useEffect(() => {
     dispatch(getAllLabs()).then((data) => {
       if (data.payload.success) {
         console.log("Labs are fetched successfully");
       }
     });
-  }, [dispatch]);
+  }, []);
 
   return (
     <div className="lab-container">
@@ -38,6 +38,14 @@ const Lab = () => {
                   }}
                 >
                   Delete Lab
+                </button>
+
+                <button
+                  onClick={() => {
+                    navigate(`/dashboard/admin/labs/${element._id}/batches`);
+                  }}
+                >
+                  Show Batches
                 </button>
               </div>
             );

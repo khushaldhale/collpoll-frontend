@@ -12,7 +12,10 @@ export const batchesByLab = createAsyncThunk("batchesByLab", async (data) => {
 })
 
 
-export const ParticularBatch = createAsyncThunk("ParticularBatch", async (data) => {
+
+//  not maintainig data at frontend we should do that
+// batch is fetched followed by lab Id
+export const ParticularBatchByLabId = createAsyncThunk("ParticularBatchByLabId", async (data) => {
 	const response = await fetch(`http://localhost:4000/api/v1/labs/${data.labId}/batches/${data.batchId}`, {
 		method: "GET",
 		credentials: "include"
@@ -65,8 +68,38 @@ export const updateBatch = createAsyncThunk("updateBatch", async (data) => {
 })
 
 
+export const batchesByInstructor = createAsyncThunk("batchesByInstructor", async () => {
+	const response = await fetch(`http://localhost:4000/api/v1/instructor/batches`, {
+		method: "GET",
+		credentials: "include"
+	})
+
+	const result = await response.json()
+	return result;
+})
+
+// create an API to fetch a batch  by  batch ID
+
+
+
+export const particularBatch = createAsyncThunk("particularBatch", async (data) => {
+	const response = await fetch(`http://localhost:4000/api/v1/batches/${data.batchId}`, {
+		method: "GET",
+		credentials: "include"
+	})
+
+	const result = await response.json()
+	return result;
+})
+
+
+
+
+
 const initialState = {
-	batches: []
+	batches: [],
+	instructorBatches: [],
+	singleBatch: undefined
 }
 
 export const batchSlice = createSlice(
@@ -78,6 +111,9 @@ export const batchSlice = createSlice(
 			builder.addCase(batchesByLab.fulfilled, (state, action) => {
 				state.batches = [...action.payload.data]
 			})
+			builder.addCase(batchesByInstructor.fulfilled, (state, action) => {
+				state.instructorBatches = [...action.payload.data]
+			})
 
 			builder.addCase(createBatch.fulfilled, (state, action) => {
 				state.batches.push(action.payload.data)
@@ -85,6 +121,7 @@ export const batchSlice = createSlice(
 
 
 			builder.addCase(updateBatch.fulfilled, (state, action) => {
+				console.log(action.payload)
 				const index = state.batches.findIndex((element) => {
 					return element._id == action.payload.data._id
 				})
@@ -96,6 +133,11 @@ export const batchSlice = createSlice(
 					return element._id == action.payload.data._id
 				})
 				state.batches.splice(index, 1)
+			})
+
+			builder.addCase(particularBatch.fulfilled, (state, action) => {
+				console.log(action.payload)
+				state.singleBatch = action.payload.data;
 			})
 		}
 	}

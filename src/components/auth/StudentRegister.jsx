@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { studentRegistration } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
-import "./Register.css";
 import { getAllCourses } from "../../redux/slices/courseSlice";
 import accountType from "../../constants/application";
 
@@ -19,7 +18,6 @@ const StudentRegister = () => {
     fname: "",
     lname: "",
     email: email,
-    otp: "",
     accountType: accountType.student,
     course_interested_in: "",
   });
@@ -74,14 +72,6 @@ const StudentRegister = () => {
           onChange={changeHandler}
           value={formData.email}
           placeholder="Email"
-        />
-
-        <input
-          type="number"
-          name="otp"
-          onChange={changeHandler}
-          value={formData.otp}
-          placeholder="OTP"
         />
 
         <select

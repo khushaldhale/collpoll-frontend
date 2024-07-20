@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { updateSub } from "../../redux/slices/subjectSlice";
+import { particularSub, updateSub } from "../../redux/slices/subjectSlice";
 
 const UpdateSubject = () => {
   const dispatch = useDispatch();
@@ -13,6 +13,18 @@ const UpdateSubject = () => {
   const navigate = useNavigate();
 
   const { categoryId, courseId, subjectId } = useParams();
+
+  useEffect(() => {
+    dispatch(particularSub({ subjectId })).then((data) => {
+      console.log("sub data is fetched ", data.payload.data);
+      if (data.payload.success) {
+        setFormData({
+          sub_name: data.payload.data.sub_name,
+          sub_desc: data.payload.data.sub_desc,
+        });
+      }
+    });
+  }, []);
 
   function changeHandler(event) {
     console.log(event.target.name, " : ", event.target.value);

@@ -1,8 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-	subjects: [],
-};
 
 export const createSub = createAsyncThunk("createSub", async (data) => {
 	const { categoryId, courseId } = data;
@@ -71,6 +68,45 @@ export const updateSub = createAsyncThunk("updateSub", async (data) => {
 	return result;
 });
 
+
+// fetch the sub via course only
+
+export const subByCourse = createAsyncThunk("subByCourse", async (data) => {
+	//courseId it is an  object here not ID total object is sent 
+	const { courseId } = data;
+	const response = await fetch(
+		`http://localhost:4000/api/v1/subjects/${courseId._id}`, // given  id here now
+		{
+			method: "GET",
+			credentials: "include",
+		}
+	);
+	const result = await response.json();
+
+	return result;
+});
+
+export const particularSub = createAsyncThunk("particularSub", async (data) => {
+	const { subjectId } = data;
+
+	const response = await fetch(
+		`http://localhost:4000/api/v1/sub/${subjectId}`,
+		{
+			method: "GET",
+			credentials: "include",
+		}
+	);
+	const result = await response.json();
+
+	return result;
+});
+
+
+const initialState = {
+	subjects: [],
+	subByCourse: []
+};
+
 export const subjectSlice = createSlice({
 	name: "subject",
 	initialState,
@@ -93,6 +129,13 @@ export const subjectSlice = createSlice({
 				return element._id == action.payload.data._id;
 			});
 			state.subjects.splice(index, 1);
+		});
+		builder.addCase(subByCourse.fulfilled, (state, action) => {
+			state.subByCourse = [...action.payload.data];
+		});
+		builder.addCase(particularSub.fulfilled, (state, action) => {
+			// not storing  aqnything in redux store
+			console.log("particular subject is fetched ", action.payload.data)
 		});
 	},
 });

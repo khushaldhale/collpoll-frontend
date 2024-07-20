@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { sendOTP } from "../../redux/slices/authSlice";
-import "./SendOTP.css";
 const SendOTP = ({ setIsRegistered }) => {
   const [formData, setFormData] = useState({
     email: "",

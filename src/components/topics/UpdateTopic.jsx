@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { updateTopic } from "../../redux/slices/topicSlice";
+import { particularTopic, updateTopic } from "../../redux/slices/topicSlice";
 
 const UpdateTopic = () => {
   const dispatch = useDispatch();
@@ -14,6 +14,19 @@ const UpdateTopic = () => {
   const navigate = useNavigate();
 
   const { categoryId, courseId, subjectId, topicId } = useParams();
+
+  useEffect(() => {
+    dispatch(particularTopic({ topicId })).then((data) => {
+      console.log("topics is ", data.payload.data);
+      if (data.payload.success) {
+        setFormData({
+          topic_name: data.payload.data.topic_name,
+          topic_desc: data.payload.data.topic_desc,
+          duration: data.payload.data.duration,
+        });
+      }
+    });
+  }, []);
 
   function changeHandler(event) {
     console.log(event.target.name, " : ", event.target.value);

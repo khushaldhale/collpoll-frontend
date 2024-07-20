@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
-import "./Register.css";
 import accountType from "../../constants/application";
 
 // student registeration is remained we have to provide courses which course they are inetred=sted in

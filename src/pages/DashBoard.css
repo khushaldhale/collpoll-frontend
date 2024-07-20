@@ -1,7 +1,0 @@
-/* DashBoard.css */
-
-.dashboard-container {
-	display: flex;
-	height: calc(100vh - 100px); /* Adjust for navbar height */
-  }
-  

@@ -4,9 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { deleteTopic, topicBySub } from "../../redux/slices/topicSlice";
 
 const Topics = () => {
-  const topics = useSelector((state) => {
-    return state.topic.topics;
-  }, []);
+  const topics = useSelector((state) => state.topic.topics);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -22,26 +20,48 @@ const Topics = () => {
   }, [dispatch, categoryId, subjectId, courseId]);
 
   return (
-    <div className="topics-container">
-      <div className="topics-list">
+    <div className="p-4 max-w-6xl mx-auto">
+      <h2 className="text-2xl font-semibold mb-6 text-center">Topics</h2>
+      <div className="mt-6 flex justify-center">
+        <button
+          onClick={() =>
+            navigate(
+              `/dashboard/admin/categories/${categoryId}/courses/${courseId}/sub/${subjectId}/topics/add`
+            )
+          }
+          className="border rounded-lg py-2 px-4 hover:bg-gray-200 w-full max-w-xs text-center"
+        >
+          Add Topic
+        </button>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
         {topics.length > 0 ? (
-          topics.map((element) => {
-            return (
-              <div className="topics-card" key={element._id}>
-                <p>{element.topic_name}</p>
-                <p>{element.topic_desc}</p>
-                <p>{element.duration}</p>
+          topics.map((element) => (
+            <div
+              key={element._id}
+              className="bg-white shadow-md rounded-lg p-6 flex flex-col space-y-4"
+            >
+              <p className="text-xl font-semibold text-center">
+                {element.topic_name}
+              </p>
+              <p className="text-gray-700 text-center">{element.topic_desc}</p>
+              <p className="text-gray-600 text-center">
+                Duration: {element.duration}
+              </p>
+
+              <div className="flex flex-col space-y-4 mt-4">
                 <button
-                  onClick={() => {
+                  onClick={() =>
                     navigate(
                       `/dashboard/admin/categories/${categoryId}/courses/${courseId}/sub/${subjectId}/topics/${element._id}/update`
-                    );
-                  }}
+                    )
+                  }
+                  className="border rounded-lg py-2 px-4 w-full hover:bg-gray-200 text-center"
                 >
                   Update Topic
                 </button>
                 <button
-                  onClick={() => {
+                  onClick={() =>
                     dispatch(
                       deleteTopic({
                         categoryId,
@@ -53,28 +73,18 @@ const Topics = () => {
                       if (data.payload.success) {
                         console.log("Topic is deleted successfully");
                       }
-                    });
-                  }}
+                    })
+                  }
+                  className="border rounded-lg py-2 px-4 w-full hover:bg-gray-200 text-center"
                 >
                   Delete Topic
                 </button>
               </div>
-            );
-          })
+            </div>
+          ))
         ) : (
-          <p>No topics are created yet</p>
+          <p className="text-gray-700 text-center">No topics are created yet</p>
         )}
-      </div>
-      <div className="add-topic">
-        <button
-          onClick={() => {
-            navigate(
-              `/dashboard/admin/categories/${categoryId}/courses/${courseId}/sub/${subjectId}/topics/add`
-            );
-          }}
-        >
-          Add Topic
-        </button>
       </div>
     </div>
   );

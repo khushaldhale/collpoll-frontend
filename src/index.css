@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* Tailwind CSS for input fields and buttons */
+.input-field {
+	@apply w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500;
+  }
+  
+  .submit-button {
+	@apply w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition duration-300;
+  }
+  
+  /* Container for form rows */
+  .form-row {
+	@apply flex space-x-4;
+  }
+  
+
+  

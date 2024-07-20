@@ -1,9 +1,35 @@
 import React from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const StudentDashBoard = () => {
+  const navigate = useNavigate();
+
   return (
-    <div>
-      <p>This is Student DashBoard</p>
+    <div className="student-dashboard flex w-full h-screen">
+      <div className="sidebar-nav bg-gray-800 text-white w-64 flex-shrink-0 p-4">
+        <p
+          className="sidebar-item cursor-pointer mb-4 hover:bg-gray-700 p-2 rounded"
+          onClick={() => navigate("/dashboard/student/enrolled-courses")}
+        >
+          Enrolled Courses
+        </p>
+        <p
+          className="sidebar-item cursor-pointer mb-4 hover:bg-gray-700 p-2 rounded"
+          onClick={() => navigate("/dashboard/student/assignments")}
+        >
+          Assignments
+        </p>
+        <p
+          className="sidebar-item cursor-pointer mb-4 hover:bg-gray-700 p-2 rounded"
+          onClick={() => navigate("/dashboard/student/grades")}
+        >
+          Grades
+        </p>
+        {/* Add more sidebar items as needed */}
+      </div>
+      <div className="sidebar-content flex-1 p-4 overflow-y-auto">
+        <Outlet />
+      </div>
     </div>
   );
 };

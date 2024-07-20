@@ -3,36 +3,32 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 const InstructorDashBoard = () => {
   const navigate = useNavigate();
-  return (
-    <div>
-      <p>This is Instrucor Dashboard</p>
 
-      <div>
+  return (
+    <div className="instructor-dashboard flex w-full h-screen">
+      <div className="sidebar-nav bg-gray-800 text-white w-64 flex-shrink-0 p-4">
         <p
-          onClick={() => {
-            navigate("/dashboard/instructor/batches");
-          }}
+          className="sidebar-item cursor-pointer mb-4 hover:bg-gray-700 p-2 rounded"
+          onClick={() => navigate("/dashboard/instructor/batches")}
         >
-          Instructor batches
+          Instructor Batches
         </p>
         <p
-          onClick={() => {
-            navigate("/dashboard/instructor/batches/allocation");
-          }}
+          className="sidebar-item cursor-pointer mb-4 hover:bg-gray-700 p-2 rounded"
+          onClick={() => navigate("/dashboard/instructor/batches/allocation")}
         >
           Batch Allocation
         </p>
         <p
-          onClick={() => {
-            navigate("/dashboard/instructor/batches/study");
-          }}
+          className="sidebar-item cursor-pointer mb-4 hover:bg-gray-700 p-2 rounded"
+          onClick={() => navigate("/dashboard/instructor/batches/study")}
         >
           Study Material
         </p>
+        {/* Add more sidebar items as needed */}
       </div>
-
-      <div>
-        <Outlet></Outlet>
+      <div className="sidebar-content flex-1 p-4 overflow-y-auto">
+        <Outlet />
       </div>
     </div>
   );

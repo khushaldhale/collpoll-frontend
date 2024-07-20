@@ -9,84 +9,91 @@ import { useNavigate, useParams } from "react-router-dom";
 const Courses = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { categoryId } = useParams();
 
-  const params = useParams();
-  const { categoryId } = params;
-
-  const courses = useSelector((state) => {
-    return state.course.courses;
-  });
+  const courses = useSelector((state) => state.course.courses);
 
   useEffect(() => {
     dispatch(CoursesByCategory({ categoryId })).then((data) => {
       if (data.payload.success) {
-        console.log("all courses are fetched succefully");
+        console.log("All courses are fetched successfully");
       }
     });
-  }, []);
-  return (
-    <div className="course-container">
-      <div className="sec-1">
-        {courses.length > 0 ? (
-          courses.map((element) => {
-            return (
-              <div className="course">
-                <p>{element.course_name}</p>
-                <p>{element.course_desc}</p>
-                <p>{element.course_price}</p>
-                <p>{element.course_isInstallment}</p>
-                <p>{element.installment_desc}</p>
+  }, [dispatch, categoryId]);
 
+  return (
+    <div className="p-4 max-w-6xl mx-auto">
+      <h2 className="text-2xl font-semibold mb-6">Courses</h2>
+
+      <div className="mt-6 flex justify-center mb-4">
+        <button
+          onClick={() =>
+            navigate(`/dashboard/admin/categories/${categoryId}/courses/add`)
+          }
+          className="border rounded-lg py-2 px-4 hover:bg-gray-200"
+        >
+          Add Course
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {courses.length > 0 ? (
+          courses.map((element) => (
+            <div
+              key={element._id}
+              className="bg-white shadow-md rounded-lg p-6 flex flex-col space-y-4"
+            >
+              <h3 className="text-xl font-semibold">{element.course_name}</h3>
+              <p className="text-gray-700">{element.course_desc}</p>
+              <p className="text-gray-600">Price: ${element.course_price}</p>
+              <p className="text-gray-600">
+                Installment: {element.course_isInstallment ? "Yes" : "No"}
+              </p>
+              <p className="text-gray-600">
+                Installment Description: {element.installment_desc}
+              </p>
+
+              <div className="flex flex-col space-y-4">
                 <button
-                  onClick={() => {
+                  onClick={() =>
                     navigate(
                       `/dashboard/admin/categories/${categoryId}/courses/${element._id}/update`
-                    );
-                  }}
+                    )
+                  }
+                  className="border rounded-lg py-2 px-4 w-full text-center hover:bg-gray-200"
                 >
                   Update Course
                 </button>
-
                 <button
-                  onClick={() => {
+                  onClick={() =>
                     dispatch(
                       deleteCourse({ categoryId, courseId: element._id })
                     ).then((data) => {
                       if (data.payload.success) {
-                        console.log("course is deleted succesfully");
+                        console.log("Course is deleted successfully");
                       }
-                    });
-                  }}
+                    })
+                  }
+                  className="border rounded-lg py-2 px-4 w-full text-center hover:bg-gray-200"
                 >
                   Delete Course
                 </button>
-
                 <button
-                  onClick={() => {
+                  onClick={() =>
                     navigate(
                       `/dashboard/admin/categories/${categoryId}/courses/${element._id}/sub`
-                    );
-                  }}
+                    )
+                  }
+                  className="border rounded-lg py-2 px-4 w-full text-center hover:bg-gray-200"
                 >
                   View All Sub
                 </button>
               </div>
-            );
-          })
+            </div>
+          ))
         ) : (
-          <p> No courses are added yet</p>
+          <p className="text-gray-700">No courses are added yet</p>
         )}
-      </div>
-
-      <div className="sec-2">
-        <button
-          onClick={() => {
-            navigate(`/dashboard/admin/categories/${categoryId}/courses/add`);
-          }}
-        >
-          {" "}
-          Add Course
-        </button>
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-// import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import Register from './pages/Register';
 import Login from './pages/Login';
@@ -34,11 +33,12 @@ import UpdateBatch from './components/batches/UpdateBatch';
 import InstructorDashBoard from './components/dashboard/InstructorDashBoard';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 function App() {
   return (
-    <div className="App">
+    <div className="min-h-screen bg-gray-100">
       <NavBar />
-      <div className="content">
+      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
@@ -49,47 +49,39 @@ function App() {
             <Route path="categories" element={<Category />} />
             <Route path="categories/add" element={<AddCategory />} />
             <Route path="categories/:categoryId/update" element={<UpdateCategory />} />
-            <Route path='categories/:categoryId/courses' element={<Courses></Courses>}></Route>
-            <Route path='categories/:categoryId/courses/add' element={<AddCourse></AddCourse>}></Route>
-            <Route path='categories/:categoryId/courses/:courseId/update' element={<UpdateCourse></UpdateCourse>}></Route>
-            <Route path='categories/:categoryId/courses/:courseId/sub' element={<Subject></Subject>}></Route>
-            <Route path='categories/:categoryId/courses/:courseId/sub/add' element={<AddSubject></AddSubject>}></Route>
-            <Route path='categories/:categoryId/courses/:courseId/sub/:subjectId/update' element={<UpdateSubject></UpdateSubject>}></Route>
-            <Route path='categories/:categoryId/courses/:courseId/sub/:subjectId/topics' element={<Topics></Topics>}></Route>
-            <Route path='categories/:categoryId/courses/:courseId/sub/:subjectId/topics/:topicId/update' element={<UpdateTopic></UpdateTopic>}></Route>
-            <Route path='categories/:categoryId/courses/:courseId/sub/:subjectId/topics/add' element={<AddTopic></AddTopic>}></Route>
-            <Route path='labs' element={<Lab></Lab>}></Route>
-            <Route path='labs/add' element={<AddLab></AddLab>}></Route>
-            {/*  routes for batches  */}
-            <Route path='labs/:labId/batches' element={<Batches></Batches>}></Route>
-            <Route path='labs/:labId/batches/add' element={<AddBatch></AddBatch>}></Route>
-            <Route path='labs/:labId/batches/:batchId/update' element={<UpdateBatch></UpdateBatch>}></Route>
+            <Route path="categories/:categoryId/courses" element={<Courses />} />
+            <Route path="categories/:categoryId/courses/add" element={<AddCourse />} />
+            <Route path="categories/:categoryId/courses/:courseId/update" element={<UpdateCourse />} />
+            <Route path="categories/:categoryId/courses/:courseId/sub" element={<Subject />} />
+            <Route path="categories/:categoryId/courses/:courseId/sub/add" element={<AddSubject />} />
+            <Route path="categories/:categoryId/courses/:courseId/sub/:subjectId/update" element={<UpdateSubject />} />
+            <Route path="categories/:categoryId/courses/:courseId/sub/:subjectId/topics" element={<Topics />} />
+            <Route path="categories/:categoryId/courses/:courseId/sub/:subjectId/topics/:topicId/update" element={<UpdateTopic />} />
+            <Route path="categories/:categoryId/courses/:courseId/sub/:subjectId/topics/add" element={<AddTopic />} />
+            <Route path="labs" element={<Lab />} />
+            <Route path="labs/add" element={<AddLab />} />
+            <Route path="labs/:labId/batches" element={<Batches />} />
+            <Route path="labs/:labId/batches/add" element={<AddBatch />} />
+            <Route path="labs/:labId/batches/:batchId/update" element={<UpdateBatch />} />
           </Route>
-          <Route path='/dashboard/counsellor' element={<CounsellorDashBoard></CounsellorDashBoard>}>
-            <Route path='pending/counselling' element={<PendingCounselling></PendingCounselling>}></Route>
+          <Route path="/dashboard/counsellor" element={<CounsellorDashBoard />}>
+            <Route path="pending/counselling" element={<PendingCounselling />} />
           </Route>
-          <Route path='/dashboard/instructor' element={<InstructorDashBoard></InstructorDashBoard>}>
-            {/* running batches ans dtudents in it   */}
-            <Route path='batches' element={<InstructoBatches></InstructoBatches>}> </Route>
-            <Route path='batches/:batchId/students' element={<StudentsByBatch></StudentsByBatch>}> </Route>
-            {/* batch allocation to students  */}
-            <Route path='batches/allocation' element={<BatchAllocation></BatchAllocation>}> </Route>
-            {/* study Material */}
-            {/* it will show all the batches to upload study material, conditional rendering done */}
-            <Route path='batches/study' element={<InstructoBatches></InstructoBatches>}> </Route>
-            {/*  showing study material for all particular batch */}
-            <Route path='batches/:batchId/study' element={<StudyMaterial></StudyMaterial>}> </Route>
-            {/* upload study material for particular batch */}
-            <Route path='batches/:batchId/study/upload' element={<UploadStudyMaterial></UploadStudyMaterial>}> </Route>
-            {/*  attendance routes  */}
-            {/*  conditional rendering here as well  */}
-            <Route path='batches/attendance' element={<InstructoBatches></InstructoBatches>}> </Route>
-            <Route path='batches/:batchId/students/attendance' element={<StudentsByBatch></StudentsByBatch>}> </Route>
+          <Route path="/dashboard/instructor" element={<InstructorDashBoard />}>
+            <Route path="batches" element={<InstructoBatches />} />
+            <Route path="batches/:batchId/students" element={<StudentsByBatch />} />
+            <Route path="batches/allocation" element={<BatchAllocation />} />
+            <Route path="batches/study" element={<InstructoBatches />} />
+            <Route path="batches/:batchId/study" element={<StudyMaterial />} />
+            <Route path="batches/:batchId/study/upload" element={<UploadStudyMaterial />} />
+            <Route path="batches/attendance" element={<InstructoBatches />} />
+            <Route path="batches/:batchId/students/attendance" element={<StudentsByBatch />} />
           </Route>
         </Routes>
       </div>
-      <ToastContainer></ToastContainer>
+      <ToastContainer />
     </div>
   );
 }
+
 export default App;

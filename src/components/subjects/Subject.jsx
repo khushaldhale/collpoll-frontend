@@ -4,15 +4,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { deleteSub, subByCategory } from "../../redux/slices/subjectSlice";
 
 const Subject = () => {
-  const subjects = useSelector((state) => {
-    console.log("Current state:", state); // Debugging line
-    return state.subject.subjects;
-  });
-
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const { categoryId, courseId } = useParams();
+
+  const subjects = useSelector((state) => state.subject.subjects);
 
   useEffect(() => {
     dispatch(subByCategory({ categoryId, courseId })).then((data) => {
@@ -23,20 +19,37 @@ const Subject = () => {
   }, [dispatch, categoryId, courseId]);
 
   return (
-    <div className="subject-container">
-      <div className="subject-list">
+    <div className="p-4 max-w-6xl mx-auto">
+      <h2 className="text-2xl font-semibold mb-6">Subjects</h2>
+      <div className="mt-6 flex justify-center mb-4">
+        <button
+          onClick={() =>
+            navigate(
+              `/dashboard/admin/categories/${categoryId}/courses/${courseId}/sub/add`
+            )
+          }
+          className="border rounded-lg py-2 px-4 hover:bg-gray-200"
+        >
+          Add Subject
+        </button>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {subjects.length > 0 ? (
-          subjects.map((element) => {
-            return (
-              <div className="subject-card" key={element._id}>
-                <p>{element.sub_name}</p>
-                <p>{element.sub_desc}</p>
+          subjects.map((element) => (
+            <div
+              key={element._id}
+              className="bg-white shadow-md rounded-lg p-6 flex flex-col space-y-4"
+            >
+              <h3 className="text-xl font-semibold">{element.sub_name}</h3>
+              <p className="text-gray-700">{element.sub_desc}</p>
+              <div className="flex flex-col space-y-2">
                 <button
-                  onClick={() => {
+                  onClick={() =>
                     navigate(
                       `/dashboard/admin/categories/${categoryId}/courses/${courseId}/sub/${element._id}/update`
-                    );
-                  }}
+                    )
+                  }
+                  className="border rounded-lg py-2 px-4 w-full hover:bg-gray-200 text-center"
                 >
                   Update Sub
                 </button>
@@ -54,36 +67,26 @@ const Subject = () => {
                       }
                     });
                   }}
+                  className="border rounded-lg py-2 px-4 w-full hover:bg-gray-200 text-center"
                 >
                   Delete Sub
                 </button>
-
                 <button
-                  onClick={() => {
+                  onClick={() =>
                     navigate(
                       `/dashboard/admin/categories/${categoryId}/courses/${courseId}/sub/${element._id}/topics`
-                    );
-                  }}
+                    )
+                  }
+                  className="border rounded-lg py-2 px-4 w-full hover:bg-gray-200 text-center"
                 >
                   View All Topics
                 </button>
               </div>
-            );
-          })
+            </div>
+          ))
         ) : (
-          <p>No subjects created</p>
+          <p className="text-gray-700">No subjects created</p>
         )}
-      </div>
-      <div className="add-subject">
-        <button
-          onClick={() => {
-            navigate(
-              `/dashboard/admin/categories/${categoryId}/courses/${courseId}/sub/add`
-            );
-          }}
-        >
-          Add Subject
-        </button>
       </div>
     </div>
   );

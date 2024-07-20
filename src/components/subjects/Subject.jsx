@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { deleteSub, subByCategory } from "../../redux/slices/subjectSlice";
-import "./Subject.css";
 
 const Subject = () => {
   const subjects = useSelector((state) => {

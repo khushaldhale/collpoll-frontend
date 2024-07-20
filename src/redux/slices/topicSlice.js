@@ -59,6 +59,18 @@ export const topicBySub = createAsyncThunk("topicBySub", async (data) => {
 })
 
 
+export const particularTopic = createAsyncThunk("particularTopic", async (data) => {
+	const { topicId } = data;
+	const response = await fetch(`http://localhost:4000/api/v1/topics/${topicId}`, {
+		method: "GET",
+		credentials: "include"
+	})
+
+	const result = await response.json()
+	return result
+})
+
+
 
 
 
@@ -90,6 +102,11 @@ export const topicSlice = createSlice(
 				})
 
 				state.topics.splice(index, 1)
+			})
+			builder.addCase(particularTopic.fulfilled, (state, action) => {
+				// printing the topic only , not doing anything else
+				// not doing any redux interactions as we do not need much
+				console.log(action.payload.data)
 			})
 
 		}

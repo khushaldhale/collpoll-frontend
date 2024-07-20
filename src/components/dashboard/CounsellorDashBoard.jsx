@@ -1,6 +1,5 @@
 import React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import "./CounsellorDashBoard.css";
 
 const CounsellorDashBoard = () => {
   const navigate = useNavigate();

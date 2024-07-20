@@ -7,6 +7,10 @@ import topicSlice from "./slices/topicSlice";
 import labSlice from "./slices/labSlice";
 import batchSlice from "./slices/batchSlice";
 import pendingStudentsSlice from "./slices/pendingStudentsSlice";
+import attendanceSlice from "./slices/attendanceSlice";
+import instructorSlice from "./slices/instructorSlice";
+import studentSlice from "./slices/studentSlice";
+import studyMaterialSlice from "./slices/studyMaterialSlice";
 
 export const store = configureStore({
 	reducer: {
@@ -17,6 +21,10 @@ export const store = configureStore({
 		topic: topicSlice,
 		lab: labSlice,
 		batch: batchSlice,
-		pendingStudents: pendingStudentsSlice
+		pendingStudents: pendingStudentsSlice,
+		attendance: attendanceSlice,
+		instructor: instructorSlice,
+		student: studentSlice,
+		studyMaterial: studyMaterialSlice
 	},
 });

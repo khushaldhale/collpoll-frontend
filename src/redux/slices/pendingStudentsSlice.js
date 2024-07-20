@@ -11,6 +11,7 @@ export const getPendingStudents = createAsyncThunk("getPendingStudents", async (
 
 
 	const result = await response.json();
+	console.log("pending students are at front", result)
 	return result;
 })
 
@@ -46,6 +47,7 @@ export const pendingStudentsSlice = createSlice(
 		extraReducers: (builder) => {
 
 			builder.addCase(getPendingStudents.fulfilled, (state, action) => {
+				console.log(" pending students are", action.payload.data)
 				state.pendingStudents = [...action.payload.data]
 			})
 

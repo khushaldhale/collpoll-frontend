@@ -5,7 +5,7 @@ import {
 } from "../../redux/slices/courseSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import "./Courses.css";
+
 const Courses = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();

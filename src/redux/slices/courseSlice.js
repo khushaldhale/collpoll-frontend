@@ -70,7 +70,7 @@ export const updateCourse = createAsyncThunk("updateCourse", async (data) => {
 
 
 export const getAllCourses = createAsyncThunk("getAllCourses", async (data) => {
-	const response = await fetch("http://localhost:4000/api/v1/categories/all/courses", {
+	const response = await fetch("http://localhost:4000/api/v1/courses", {
 		method: "GET",
 		credentials: "include"
 	})

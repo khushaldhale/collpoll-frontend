@@ -5,7 +5,6 @@ import {
   getAllCategories,
 } from "../../redux/slices/categorySlice";
 import { useNavigate } from "react-router-dom";
-import "./Category.css";
 
 const Category = () => {
   const categories = useSelector((state) => state.category.categories);

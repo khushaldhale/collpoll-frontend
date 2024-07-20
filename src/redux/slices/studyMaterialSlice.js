@@ -4,26 +4,31 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 // batch  id should also be provideed here , shoudd be taken from params
 export const createStudyMaterial = createAsyncThunk("createStudyMaterial", async (data) => {
+	console.log(data);
 	const formData = new FormData();
 	formData.append("notes", data.notes);
-	formData.append("notes", data.subjectId);
+	formData.append("subjectId", data.subjectId);
+
+	// Log the FormData entries
+	for (let [key, value] of formData.entries()) {
+		console.log(`${key}: ${value}`);
+	}
 
 	const response = await fetch(`http://localhost:4000/api/v1/batches/${data.batchId}/study-material`, {
 		method: "POST",
-		headers: {
-			"Content-Type": "application/json"
-		},
+		// Do not set the Content-Type header manually
 		body: formData,
 		credentials: "include"
-	})
+	});
 
 	const result = await response.json();
 	return result;
+});
 
-})
 
 // batch and study id  both should be taken from params
-export const deleteStudyMaterial = createAsyncThunk("deleteStudyMaterial", async (data) => {
+export const deleteMaterial = createAsyncThunk("deleteMaterial", async (data) => {
+	console.log(data)
 
 	const response = await fetch(`http://localhost:4000/api/v1/batches/${data.batchId}/study-material/${data.studyId}`, {
 		method: "DELETE",
@@ -63,6 +68,7 @@ export const studyMaterialSlice = createSlice(
 		extraReducers: (builder) => {
 
 			builder.addCase(studyMaterialByBatch.fulfilled, (state, action) => {
+
 				state.studyMaterials = [...action.payload.data]
 			})
 
@@ -71,7 +77,8 @@ export const studyMaterialSlice = createSlice(
 				state.studyMaterials.push(action.payload.data)
 			})
 
-			builder.addCase(deleteStudyMaterial.fulfilled, (state, action) => {
+			builder.addCase(deleteMaterial.fulfilled, (state, action) => {
+				console.log(action.payload.data)
 				const index = state.studyMaterials.findIndex((element) => {
 					return element._id == action.payload.data._id
 				})

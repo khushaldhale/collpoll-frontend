@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { createCategory } from "../../redux/slices/categorySlice";
 import { createSub } from "../../redux/slices/subjectSlice";
 
 const AddSubject = () => {

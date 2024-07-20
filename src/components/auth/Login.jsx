@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
-import "./Login.css";
-
+import { toast } from "react-toastify";
 const UserLogin = () => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({

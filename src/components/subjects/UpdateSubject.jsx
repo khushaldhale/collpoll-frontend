@@ -11,12 +11,10 @@ const UpdateSubject = () => {
   });
 
   const navigate = useNavigate();
-
   const { categoryId, courseId, subjectId } = useParams();
 
   useEffect(() => {
     dispatch(particularSub({ subjectId })).then((data) => {
-      console.log("sub data is fetched ", data.payload.data);
       if (data.payload.success) {
         setFormData({
           sub_name: data.payload.data.sub_name,
@@ -24,17 +22,15 @@ const UpdateSubject = () => {
         });
       }
     });
-  }, []);
+  }, [dispatch, subjectId]);
 
   function changeHandler(event) {
-    console.log(event.target.name, " : ", event.target.value);
-    setFormData((prevData) => {
-      return {
-        ...prevData,
-        [event.target.name]: event.target.value,
-      };
-    });
+    setFormData((prevData) => ({
+      ...prevData,
+      [event.target.name]: event.target.value,
+    }));
   }
+
   function submitHandler(event) {
     event.preventDefault();
     formData.categoryId = categoryId;
@@ -49,24 +45,36 @@ const UpdateSubject = () => {
   }
 
   return (
-    <div>
-      <form method="post" onSubmit={submitHandler}>
+    <div className="p-4 max-w-lg mx-auto">
+      <h2 className="text-2xl font-semibold mb-6 text-center">
+        Update Subject
+      </h2>
+      <form
+        onSubmit={submitHandler}
+        className="bg-white shadow-md rounded-lg p-6 space-y-4"
+      >
         <input
           type="text"
           name="sub_name"
-          placeholder="subject name"
+          placeholder="Subject Name"
           onChange={changeHandler}
           value={formData.sub_name}
+          className="w-full border rounded-lg p-2"
         />
         <input
           type="text"
           name="sub_desc"
+          placeholder="Subject Description"
           onChange={changeHandler}
-          placeholder="subject desc"
           value={formData.sub_desc}
+          className="w-full border rounded-lg p-2"
         />
-
-        <button type="submit"> Create Sub </button>
+        <button
+          type="submit"
+          className="w-full border rounded-lg py-2 px-4 hover:bg-gray-200"
+        >
+          Update Subject
+        </button>
       </form>
     </div>
   );

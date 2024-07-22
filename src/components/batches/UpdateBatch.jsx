@@ -7,67 +7,69 @@ import { getAllInstructor } from "../../redux/slices/instructorSlice";
 
 const UpdateBatch = () => {
   const { labId, batchId } = useParams();
-  console.log(labId, batchId);
   const [formData, setFormData] = useState({
-    start_time: undefined,
-    end_time: undefined,
+    start_time: "",
+    end_time: "",
     instructor: "",
     course: "",
     batch_name: "",
-    start_date: undefined,
-    end_date: undefined,
+    start_date: "",
+    end_date: "",
     status: "",
   });
 
-  const allCourses = useSelector((state) => {
-    return state.course.allCourses;
-  });
+  const allCourses = useSelector((state) => state.course.allCourses);
+  const instructors = useSelector((state) => state.instructor.instructors);
 
-  const instructors = useSelector((state) => {
-    return state.instructor.instructors;
-  });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getAllCourses()).then((data) => {
       if (data.payload.success) {
-        console.log("all courses are fetched succesfully");
+        console.log("All courses are fetched successfully");
       }
     });
 
     dispatch(getAllInstructor()).then((data) => {
       if (data.payload.success) {
-        console.log("all instructors are fetched");
+        console.log("All instructors are fetched");
       }
     });
 
     dispatch(particularBatch({ batchId })).then((data) => {
-      console.log(data.payload);
       if (data.payload.success) {
-        console.log("Information for the batch is fetched");
+        const {
+          start_time,
+          end_time,
+          instructor,
+          course,
+          batch_name,
+          start_date,
+          end_date,
+          status,
+        } = data.payload.data;
         setFormData({
-          // start_time: data.payload.data.start_time,
-          // end_time: data.payload.data.end_time,
-          // instructor: `${data.payload.data.instructor.fname}  ${data.payload.data.instructor.lname}`,
-          // course: data.payload.data.course.course_name,
-          // batch_name: data.payload.data.batch_name,
-          // start_date: data.payload.data.start_date,
-          // end_date: data.payload.data.end_date,
+          start_time,
+          end_time,
+          instructor: instructor._id,
+          course: course._id,
+          batch_name,
+          start_date,
+          end_date,
+          status,
         });
+        console.log("Information for the batch is fetched");
       }
     });
-  }, []);
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  }, [batchId, dispatch]);
 
   function changeHandler(event) {
-    const { type, name, value } = event.target;
-    setFormData((prevData) => {
-      return {
-        ...prevData,
-        [name]: value,
-      };
-    });
+    const { name, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   }
 
   function submitHandler(event) {
@@ -77,91 +79,158 @@ const UpdateBatch = () => {
 
     dispatch(updateBatch(formData)).then((data) => {
       if (data.payload.success) {
-        console.log("batch is updated succesfully");
+        console.log("Batch updated successfully");
         navigate(`/dashboard/admin/labs/${labId}/batches`);
       }
     });
   }
 
   return (
-    <div>
-      <p>Update Bacth</p>
+    <div className="update-batch-container p-4 max-w-full">
+      <h2 className="text-2xl font-semibold mb-4">Update Batch</h2>
 
-      <form method="post" onSubmit={submitHandler}>
-        <input
-          type="text"
-          name="batch_name"
-          id="batch_name"
-          placeholder="Enter Batch Name"
-          onChange={changeHandler}
-          value={formData.batch_name}
-        />
-        <input
-          type="time"
-          name="start_time"
-          id="start_time"
-          min="00.00"
-          max="23.59"
-          placeholder="Enter Start Time"
-          onChange={changeHandler}
-          value={formData.start_time}
-        />
-        <input
-          type="time"
-          name="end_time"
-          id="end_time"
-          min="00.00"
-          max="23.59"
-          placeholder="Enter End  Time"
-          onChange={changeHandler}
-          value={formData.end_time}
-        />
-        <input
-          type="date"
-          name="start_date"
-          id="start_date"
-          placeholder="Enter Start Date"
-          onChange={changeHandler}
-          value={formData.start_date}
-        />
+      <form
+        method="post"
+        onSubmit={submitHandler}
+        className="bg-white shadow-md rounded-lg p-6"
+      >
+        <div className="form-group mb-4">
+          <label htmlFor="batch_name" className="block text-gray-700 mb-2">
+            Batch Name
+          </label>
+          <input
+            type="text"
+            name="batch_name"
+            id="batch_name"
+            placeholder="Enter Batch Name"
+            onChange={changeHandler}
+            value={formData.batch_name}
+            className="w-full border rounded-md p-2"
+          />
+        </div>
 
-        <input
-          type="date"
-          name="end_date"
-          id="end_date"
-          placeholder="Enter End  Date"
-          onChange={changeHandler}
-          value={formData.end_date}
-        />
+        <div className="form-group mb-4">
+          <label htmlFor="start_time" className="block text-gray-700 mb-2">
+            Start Time
+          </label>
+          <input
+            type="time"
+            name="start_time"
+            id="start_time"
+            placeholder="Enter Start Time"
+            onChange={changeHandler}
+            value={formData.start_time}
+            className="w-full border rounded-md p-2"
+          />
+        </div>
 
-        <select name="course" id="course" onChange={changeHandler}>
-          <option value="">Select any course</option>
+        <div className="form-group mb-4">
+          <label htmlFor="end_time" className="block text-gray-700 mb-2">
+            End Time
+          </label>
+          <input
+            type="time"
+            name="end_time"
+            id="end_time"
+            placeholder="Enter End Time"
+            onChange={changeHandler}
+            value={formData.end_time}
+            className="w-full border rounded-md p-2"
+          />
+        </div>
 
-          {allCourses.map((element) => {
-            return <option value={element._id}> {element.course_name}</option>;
-          })}
-        </select>
-        <select name="instructor" id="instructor" onChange={changeHandler}>
-          <option value="">Select Instructor</option>
+        <div className="form-group mb-4">
+          <label htmlFor="start_date" className="block text-gray-700 mb-2">
+            Start Date
+          </label>
+          <input
+            type="date"
+            name="start_date"
+            id="start_date"
+            placeholder="Enter Start Date"
+            onChange={changeHandler}
+            value={formData.start_date}
+            className="w-full border rounded-md p-2"
+          />
+        </div>
 
-          {instructors.map((element) => {
-            return (
-              <option value={element._id}>
-                {" "}
+        <div className="form-group mb-4">
+          <label htmlFor="end_date" className="block text-gray-700 mb-2">
+            End Date
+          </label>
+          <input
+            type="date"
+            name="end_date"
+            id="end_date"
+            placeholder="Enter End Date"
+            onChange={changeHandler}
+            value={formData.end_date}
+            className="w-full border rounded-md p-2"
+          />
+        </div>
+
+        <div className="form-group mb-4">
+          <label htmlFor="course" className="block text-gray-700 mb-2">
+            Course
+          </label>
+          <select
+            name="course"
+            id="course"
+            onChange={changeHandler}
+            value={formData.course}
+            className="w-full border rounded-md p-2"
+          >
+            <option value="">Select a course</option>
+            {allCourses.map((element) => (
+              <option key={element._id} value={element._id}>
+                {element.course_name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="form-group mb-4">
+          <label htmlFor="instructor" className="block text-gray-700 mb-2">
+            Instructor
+          </label>
+          <select
+            name="instructor"
+            id="instructor"
+            onChange={changeHandler}
+            value={formData.instructor}
+            className="w-full border rounded-md p-2"
+          >
+            <option value="">Select Instructor</option>
+            {instructors.map((element) => (
+              <option key={element._id} value={element._id}>
                 {element.fname + " " + element.lname}
               </option>
-            );
-          })}
-        </select>
+            ))}
+          </select>
+        </div>
 
-        <select name="status" id="status" onChange={changeHandler}>
-          <option value="">Select Status </option>
-          <option value="in progress">In Progress</option>
-          <option value="finished">Finished </option>
-          <option value="overdue">Overdue</option>
-          <option value="yet to start">yet to start</option>
-        </select>
-        <button type="submit"> Update Batch</button>
+        <div className="form-group mb-4">
+          <label htmlFor="status" className="block text-gray-700 mb-2">
+            Status
+          </label>
+          <select
+            name="status"
+            id="status"
+            onChange={changeHandler}
+            value={formData.status}
+            className="w-full border rounded-md p-2"
+          >
+            <option value="">Select Status</option>
+            <option value="in progress">In Progress</option>
+            <option value="finished">Finished</option>
+            <option value="overdue">Overdue</option>
+            <option value="yet to start">Yet to Start</option>
+          </select>
+        </div>
+
+        <button type="submit" className="btn border rounded-md py-2 px-4 mt-4">
+          Update Batch
+        </button>
       </form>
     </div>
   );

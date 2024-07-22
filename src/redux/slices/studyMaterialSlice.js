@@ -69,6 +69,8 @@ export const studyMaterialSlice = createSlice(
 
 			builder.addCase(studyMaterialByBatch.fulfilled, (state, action) => {
 
+				console.log("study ka data ", action.payload)
+
 				state.studyMaterials = [...action.payload.data]
 			})
 

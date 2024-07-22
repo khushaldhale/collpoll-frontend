@@ -35,6 +35,17 @@ export const admitStudent = createAsyncThunk("admitStudent", async (data) => {
 	return result;
 })
 
+
+export const denyAdmission = createAsyncThunk("denyAdmission", async (data) => {
+	const response = await fetch(`http://localhost:4000/api/v1/${data.studentId}/admission/deny-admission`, {
+		method: "DELETE",
+		credentials: "include"
+
+	})
+
+	return await response.json()
+})
+
 const initialState = {
 	pendingStudents: []
 }
@@ -52,6 +63,14 @@ export const pendingStudentsSlice = createSlice(
 			})
 
 			builder.addCase(admitStudent.fulfilled, (state, action) => {
+				console.log(action.payload)
+				const index = state.pendingStudents.findIndex((element) => {
+					return element._id == action.payload.data._id;
+				})
+
+				state.pendingStudents.splice(index, 1)
+			})
+			builder.addCase(denyAdmission.fulfilled, (state, action) => {
 				const index = state.pendingStudents.findIndex((element) => {
 					return element._id == action.payload.data._id;
 				})

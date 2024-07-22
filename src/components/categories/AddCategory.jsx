@@ -13,14 +13,12 @@ const AddCategory = () => {
   const navigate = useNavigate();
 
   function changeHandler(event) {
-    console.log(event.target.name, " : ", event.target.value);
-    setFormData((prevData) => {
-      return {
-        ...prevData,
-        [event.target.name]: event.target.value,
-      };
-    });
+    setFormData((prevData) => ({
+      ...prevData,
+      [event.target.name]: event.target.value,
+    }));
   }
+
   function submitHandler(event) {
     event.preventDefault();
 
@@ -32,25 +30,38 @@ const AddCategory = () => {
   }
 
   return (
-    <div>
-      <form method="post" onSubmit={submitHandler}>
-        <input
-          type="text"
-          name="category_name"
-          placeholder="category name"
-          onChange={changeHandler}
-          value={formData.category_name}
-        />
-        <input
-          type="text"
-          name="category_desc"
-          onChange={changeHandler}
-          placeholder="category desc"
-          value={formData.category_desc}
-        />
-
-        <button type="submit"> submit </button>
-      </form>
+    <div className="add-category-container p-4 max-w-full">
+      <div className="form-container bg-white shadow-md rounded-lg p-6 mb-4">
+        <h2 className="text-2xl font-semibold mb-4">Add Category</h2>
+        <form
+          method="post"
+          onSubmit={submitHandler}
+          className="flex flex-col space-y-4"
+        >
+          <input
+            type="text"
+            name="category_name"
+            placeholder="Category Name"
+            onChange={changeHandler}
+            value={formData.category_name}
+            className="border rounded-md py-2 px-4"
+          />
+          <input
+            type="text"
+            name="category_desc"
+            onChange={changeHandler}
+            placeholder="Category Description"
+            value={formData.category_desc}
+            className="border rounded-md py-2 px-4"
+          />
+          <button
+            type="submit"
+            className="btn border rounded-md py-2 px-4 w-1/3 mx-auto"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

@@ -1,8 +1,9 @@
 import React from "react";
+
 const Home = () => {
   return (
-    <div className="home-container">
-      <p>This is Home</p>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <p className="text-xl text-gray-800">This is Home</p>
     </div>
   );
 };

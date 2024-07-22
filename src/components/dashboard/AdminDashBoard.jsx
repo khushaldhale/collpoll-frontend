@@ -32,6 +32,12 @@ const AdminDashBoard = () => {
         >
           Employees
         </p>
+        <p
+          className="sidebar-item cursor-pointer mb-4 hover:bg-gray-700 p-2 rounded"
+          onClick={() => navigate("/dashboard/admin/instructor/feedbacks")}
+        >
+          Feedbacks
+        </p>
       </div>
       <div className="sidebar-content flex-1 p-4 overflow-y-auto">
         <Outlet />

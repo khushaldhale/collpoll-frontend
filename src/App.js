@@ -42,6 +42,8 @@ import CounsellorPerformance from './components/counselling/CounsellorPerformanc
 import Attendance from './components/instructor/attendance/Attendance';
 import AllStudents from './components/student/AllStudents';
 import AllEmployees from './components/admin/AllEmployees';
+import Feedback from './components/student/feedback/Feedback';
+import InstructorFeedback from './components/admin/InstructorFeedback';
 
 function App() {
   return (
@@ -75,6 +77,7 @@ function App() {
             <Route path="labs/:labId/batches/:batchId/update" element={<UpdateBatch />} />
             <Route path='students' element={<AllStudents></AllStudents>}></Route>
             <Route path='employees' element={<AllEmployees></AllEmployees>}></Route>
+            <Route path='instructor/feedbacks' element={<InstructorFeedback></InstructorFeedback>}></Route>
 
           </Route>
           <Route path="/dashboard/counsellor" element={<CounsellorDashBoard />}>
@@ -99,6 +102,7 @@ function App() {
             <Route path='enrolled-courses' element={<CourseEnrolled></CourseEnrolled>}></Route>
             <Route path='batch-allocated' element={<BatchAllocated></BatchAllocated>}></Route>
             <Route path='study-material' element={<StudentStudyMaterial></StudentStudyMaterial>}></Route>
+            <Route path='feedbacks' element={<Feedback></Feedback>}></Route>
           </Route>
 
 

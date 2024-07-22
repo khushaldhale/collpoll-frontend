@@ -78,6 +78,16 @@ export const batchesByInstructor = createAsyncThunk("batchesByInstructor", async
 	return result;
 })
 
+export const batchesByInstructorId = createAsyncThunk("batchesByInstructorId", async (data) => {
+	const response = await fetch(`http://localhost:4000/api/v1/batches/instructors/${data.instructorId}`, {
+		method: "GET",
+		credentials: "include"
+	})
+
+	const result = await response.json()
+	return result;
+})
+
 // create an API to fetch a batch  by  batch ID
 
 
@@ -124,6 +134,9 @@ export const batchSlice = createSlice(
 				state.batches = [...action.payload.data]
 			})
 			builder.addCase(batchesByInstructor.fulfilled, (state, action) => {
+				state.instructorBatches = [...action.payload.data]
+			})
+			builder.addCase(batchesByInstructorId.fulfilled, (state, action) => {
 				state.instructorBatches = [...action.payload.data]
 			})
 

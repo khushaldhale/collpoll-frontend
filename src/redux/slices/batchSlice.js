@@ -93,6 +93,15 @@ export const particularBatch = createAsyncThunk("particularBatch", async (data) 
 })
 
 
+export const allBatches = createAsyncThunk("allBatches", async () => {
+	const response = await fetch("http://localhost:4000/api/v1/batches", {
+		method: "GET",
+		credentials: "include"
+	})
+
+	return await response.json()
+})
+
 
 
 
@@ -109,6 +118,9 @@ export const batchSlice = createSlice(
 		extraReducers: (builder) => {
 
 			builder.addCase(batchesByLab.fulfilled, (state, action) => {
+				state.batches = [...action.payload.data]
+			})
+			builder.addCase(allBatches.fulfilled, (state, action) => {
 				state.batches = [...action.payload.data]
 			})
 			builder.addCase(batchesByInstructor.fulfilled, (state, action) => {
@@ -136,7 +148,7 @@ export const batchSlice = createSlice(
 			})
 
 			builder.addCase(particularBatch.fulfilled, (state, action) => {
-				console.log(action.payload)
+				console.log(" whole data is fetched", action.payload)
 				state.singleBatch = action.payload.data;
 			})
 		}

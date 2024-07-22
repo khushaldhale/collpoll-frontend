@@ -68,6 +68,17 @@ export const studentRegistration = createAsyncThunk("studentRegistration", async
 })
 
 
+export const createPassword = createAsyncThunk("createPassword", async (data) => {
+	const response = await fetch("http://localhost:4000/api/v1/auth/student/create-password", {
+		method: "PUT",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(data)
+	})
+
+	return await response.json()
+})
 
 
 const initialState = {
@@ -99,6 +110,13 @@ export const authSlice = createSlice({
 			state.token = action.payload.token;
 			state.user = action.payload.data
 			localStorage.setItem("token", JSON.stringify(action.payload.token))
+		})
+
+		builder.addCase(createPassword.fulfilled, (state, action) => {
+
+			console.log(action.payload)
+			// we are not maintaining any data in redux store here
+
 		})
 	}
 })

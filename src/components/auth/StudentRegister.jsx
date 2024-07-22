@@ -19,12 +19,12 @@ const StudentRegister = () => {
   });
 
   useEffect(() => {
-    dispatch(getAllCourses()).then((data) => {
-      if (data.payload.success) {
-        console.log("All courses are fetched successfully");
-      }
-    });
-  }, [dispatch]);
+      dispatch(getAllCourses()).then((data) => {
+        if (data.payload.success) {
+          console.log("All courses are fetched successfully");
+        }
+      });
+  }, []);
 
   function changeHandler(event) {
     setFormData((prevData) => ({

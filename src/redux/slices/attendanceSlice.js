@@ -1,6 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 
+
+// idealy  we shoudl use this markAttendance thnk  but due to data manipulation we moved 
+// it to students  slice and using it there  
 export const markAttendance = createAsyncThunk("markAttendance", async (data) => {
 	const response = await fetch('http://localhost:4000/api/v1/attendance', {
 		method: "POST",
@@ -71,6 +74,8 @@ export const attendanceSlice = createSlice(
 				state.absentStudents = [...action.payload.data]
 			})
 
+			// idealy  we shoudl use this markAttendance thnk  but due to data manipulation we moved 
+			// it to students  slice and using it there 
 			builder.addCase(markAttendance.fulfilled, (state, action) => {
 				state.attendance.push(action.payload.data)
 			})

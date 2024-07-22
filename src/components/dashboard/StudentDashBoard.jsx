@@ -15,15 +15,15 @@ const StudentDashBoard = () => {
         </p>
         <p
           className="sidebar-item cursor-pointer mb-4 hover:bg-gray-700 p-2 rounded"
-          onClick={() => navigate("/dashboard/student/assignments")}
+          onClick={() => navigate("/dashboard/student/batch-allocated")}
         >
-          Assignments
+          Batch Allocated
         </p>
         <p
           className="sidebar-item cursor-pointer mb-4 hover:bg-gray-700 p-2 rounded"
-          onClick={() => navigate("/dashboard/student/grades")}
+          onClick={() => navigate("/dashboard/student/study-material")}
         >
-          Grades
+          Study Material
         </p>
         {/* Add more sidebar items as needed */}
       </div>

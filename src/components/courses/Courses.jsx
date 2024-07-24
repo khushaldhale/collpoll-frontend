@@ -43,15 +43,28 @@ const Courses = () => {
               key={element._id}
               className="bg-white shadow-md rounded-lg p-6 flex flex-col space-y-4"
             >
-              <h3 className="text-xl font-semibold">{element.course_name}</h3>
+              <h3 className="text-xl font-semibold"> {element.course_name}</h3>
               <p className="text-gray-700">{element.course_desc}</p>
-              <p className="text-gray-600">Price: ${element.course_price}</p>
               <p className="text-gray-600">
-                Installment: {element.course_isInstallment ? "Yes" : "No"}
+                {" "}
+                Lumpsum Price: ${element.lumpsum_price}
               </p>
               <p className="text-gray-600">
-                Installment Description: {element.installment_desc}
+                Installment Price: ${element.installment_price}
               </p>
+              <p className="text-gray-600">
+                Number of Installment: ${element.number_of_installment}
+              </p>
+
+              {element.installments.map((element, index) => {
+                return (
+                  <div>
+                    <p>installment Number {index + 1}</p>
+                    <p>installment Amount {element.amount}</p>
+                    <p>Installmet Due Day{element.due_day}</p>
+                  </div>
+                );
+              })}
 
               <div className="flex flex-col space-y-4">
                 <button

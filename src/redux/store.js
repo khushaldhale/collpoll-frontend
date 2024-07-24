@@ -13,6 +13,8 @@ import studentSlice from "./slices/studentSlice";
 import studyMaterialSlice from "./slices/studyMaterialSlice";
 import counsellorSlice from "./slices/counsellorSlice";
 import feedbackSlice from "./slices/feedbackSlice";
+import installmentSlice from "./slices/installment";
+import { courseEnrollmentSlice } from "./slices/courseEnrollment";
 
 export const store = configureStore({
 	reducer: {
@@ -29,6 +31,8 @@ export const store = configureStore({
 		student: studentSlice,
 		studyMaterial: studyMaterialSlice,
 		counsellor: counsellorSlice,
-		feedback: feedbackSlice
+		feedback: feedbackSlice,
+		installment: installmentSlice,
+		courseEnrolllment: courseEnrollmentSlice
 	},
 });

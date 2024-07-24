@@ -5,34 +5,105 @@ import { createCourse } from "../../redux/slices/courseSlice";
 
 const AddCourse = () => {
   const dispatch = useDispatch();
+
+  // capturing whole data
   const [formData, setFormData] = useState({
     course_name: "",
     course_desc: "",
-    course_price: "",
-    isInstallment: false,
-    installment_desc: "",
+    lumpsum_price: "",
+    installment_price: "",
+    number_of_installment: "",
+    installments: [],
+    iterate: [],
   });
+
+  // capturing only installment data
+  const [installmentData, setInstallmentData] = useState({
+    amount: "",
+    due_day: "",
+  });
+
+  // over onchange of installment
+  // capturing amount and due_day
+  function installmentHandler(event) {
+    const { type, name, value } = event.target;
+    console.log(name + " " + value);
+
+    setInstallmentData((prevData) => {
+      return {
+        ...prevData,
+        [name]: value,
+      };
+    });
+  }
+
+  // over create  installment pushing  the installmentData into
+  // installments of formData, here worki is done
+  function submitInstallment(event) {
+    console.log(installmentData);
+    const data = formData.installments.map((element) => {
+      return element;
+    });
+
+    data.push(installmentData);
+    console.log("required array ", data);
+
+    setFormData((prevData) => {
+      return {
+        ...prevData,
+        installments: data,
+      };
+    });
+  }
 
   const { categoryId } = useParams();
   const navigate = useNavigate();
 
+  //  capturing all required data
   function changeHandler(event) {
     const { name, checked, type, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+
+    // this is done so that installments array can have value so that we can iterate that many times
+    // and for that many iteration we can create installments
+    if (name === "number_of_installment") {
+      // empty array
+      const arr = [];
+
+      for (let i = 1; i <= value; i++) {
+        arr.push(i); // filling  array that many times so that we can iterate
+      }
+      console.log(" arr is ", arr);
+      setFormData((prevData) => {
+        return {
+          ...prevData,
+          [name]: value,
+          iterate: arr, // mapped array , so that we can iterate
+        };
+      });
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    }
   }
 
+  //  submitting course, makinga call to an API
   function submitHandler(event) {
     event.preventDefault();
     formData.categoryId = categoryId;
+
+    console.log(formData);
 
     dispatch(createCourse(formData)).then((data) => {
       if (data.payload.success) {
         navigate(-1);
       }
     });
+  }
+
+  function solve() {
+    return <p> hello</p>;
   }
 
   return (
@@ -56,7 +127,6 @@ const AddCourse = () => {
             className="border border-gray-300 rounded-lg p-2"
           />
         </div>
-
         <div className="flex flex-col">
           <label htmlFor="course_desc" className="text-sm font-medium mb-1">
             Course Description
@@ -71,55 +141,69 @@ const AddCourse = () => {
             className="border border-gray-300 rounded-lg p-2"
           />
         </div>
-
         <div className="flex flex-col">
           <label htmlFor="course_price" className="text-sm font-medium mb-1">
-            Course Price
+            Lumpsum Course Price
           </label>
           <input
             type="number"
-            id="course_price"
-            name="course_price"
-            placeholder="Enter course price"
+            id="lumpsum_price"
+            name="lumpsum_price"
+            placeholder="Enter one time  course price"
             onChange={changeHandler}
-            value={formData.course_price}
+            value={formData.lumpsum_price}
+            className="border border-gray-300 rounded-lg p-2"
+          />
+
+          <label htmlFor="course_price" className="text-sm font-medium mb-1">
+            Installment Price
+          </label>
+          <input
+            type="number"
+            id="installment_price"
+            name="installment_price"
+            placeholder="Enter Installment course price"
+            onChange={changeHandler}
+            value={formData.installment_price}
+            className="border border-gray-300 rounded-lg p-2"
+          />
+
+          <label htmlFor="course_price" className="text-sm font-medium mb-1">
+            Number of Installment
+          </label>
+          <input
+            type="number"
+            id="number_of_installment"
+            name="number_of_installment"
+            placeholder="Enter Number of Installment"
+            onChange={changeHandler}
+            value={formData.number_of_installment}
             className="border border-gray-300 rounded-lg p-2"
           />
         </div>
 
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            id="isInstallment"
-            name="isInstallment"
-            onChange={changeHandler}
-            checked={formData.isInstallment}
-            className="h-4 w-4"
-          />
-          <label htmlFor="isInstallment" className="text-sm font-medium">
-            Installment
-          </label>
-        </div>
+        {formData.iterate.map((element) => {
+          return (
+            <div>
+              <input
+                type="number"
+                name="amount"
+                id="amount"
+                placeholder="Enter an Amount"
+                onChange={installmentHandler}
+              />
+              <input
+                type="number"
+                name="due_day"
+                id="due_day"
+                placeholder="Enter  installment due day"
+                onChange={installmentHandler}
+              />
 
-        {formData.isInstallment && (
-          <div className="flex flex-col">
-            <label
-              htmlFor="installment_desc"
-              className="text-sm font-medium mb-1"
-            >
-              Installment Description
-            </label>
-            <input
-              type="text"
-              id="installment_desc"
-              name="installment_desc"
-              placeholder="Enter installment description"
-              onChange={changeHandler}
-              value={formData.installment_desc}
-              className="border border-gray-300 rounded-lg p-2"
-            />
-          </div>
-        )}
+              <p onClick={submitInstallment}> create Installment</p>
+            </div>
+          );
+        })}
 
         <button
           type="submit"

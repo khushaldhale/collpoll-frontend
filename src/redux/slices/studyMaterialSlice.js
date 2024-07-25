@@ -49,6 +49,7 @@ export const studyMaterialByBatch = createAsyncThunk("studyMaterialByBatch", asy
 	})
 
 	const result = await response.json();
+	console.log("study material ", result)
 	return result;
 })
 

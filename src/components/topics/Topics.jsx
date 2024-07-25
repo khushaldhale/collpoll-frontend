@@ -5,10 +5,8 @@ import { deleteTopic, topicBySub } from "../../redux/slices/topicSlice";
 
 const Topics = () => {
   const topics = useSelector((state) => state.topic.topics);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const { categoryId, subjectId, courseId } = useParams();
 
   useEffect(() => {
@@ -20,7 +18,7 @@ const Topics = () => {
   }, [dispatch, categoryId, subjectId, courseId]);
 
   return (
-    <div className="p-4 max-w-6xl mx-auto">
+    <div className="topics-container p-4 max-w-6xl mx-auto">
       <h2 className="text-2xl font-semibold mb-6 text-center">Topics</h2>
       <div className="mt-6 flex justify-center">
         <button
@@ -29,7 +27,7 @@ const Topics = () => {
               `/dashboard/admin/categories/${categoryId}/courses/${courseId}/sub/${subjectId}/topics/add`
             )
           }
-          className="border rounded-lg py-2 px-4 hover:bg-gray-200 w-full max-w-xs text-center"
+          className="bg-blue-500 text-white border border-blue-500 rounded-lg py-2 px-4 hover:bg-blue-600 w-full max-w-xs text-center"
         >
           Add Topic
         </button>
@@ -56,7 +54,7 @@ const Topics = () => {
                       `/dashboard/admin/categories/${categoryId}/courses/${courseId}/sub/${subjectId}/topics/${element._id}/update`
                     )
                   }
-                  className="border rounded-lg py-2 px-4 w-full hover:bg-gray-200 text-center"
+                  className="bg-blue-500 text-white border border-blue-500 rounded-lg py-2 px-4 w-full hover:bg-blue-600 text-center"
                 >
                   Update Topic
                 </button>
@@ -75,7 +73,7 @@ const Topics = () => {
                       }
                     })
                   }
-                  className="border rounded-lg py-2 px-4 w-full hover:bg-gray-200 text-center"
+                  className="bg-red-500 text-white border border-red-500 rounded-lg py-2 px-4 w-full hover:bg-red-600 text-center"
                 >
                   Delete Topic
                 </button>

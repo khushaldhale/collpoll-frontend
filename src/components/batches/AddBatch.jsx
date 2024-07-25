@@ -20,7 +20,6 @@ const AddBatch = () => {
   const allCourses = useSelector((state) => state.course.allCourses);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const instructors = useSelector((state) => state.instructor.instructors);
 
   useEffect(() => {
@@ -58,9 +57,8 @@ const AddBatch = () => {
   }
 
   return (
-    <div className="add-batch-container p-4 max-w-full">
+    <div className="p-4 max-w-lg mx-auto">
       <h2 className="text-2xl font-semibold mb-4">Add Batch</h2>
-
       <form
         method="post"
         onSubmit={submitHandler}
@@ -77,7 +75,7 @@ const AddBatch = () => {
             placeholder="Enter Batch Name"
             onChange={changeHandler}
             value={formData.batch_name}
-            className="w-full border rounded-md p-2"
+            className="w-full border border-gray-300 rounded-md p-2"
           />
         </div>
 
@@ -92,7 +90,7 @@ const AddBatch = () => {
             placeholder="Enter Start Time"
             onChange={changeHandler}
             value={formData.start_time}
-            className="w-full border rounded-md p-2"
+            className="w-full border border-gray-300 rounded-md p-2"
           />
         </div>
 
@@ -107,7 +105,7 @@ const AddBatch = () => {
             placeholder="Enter End Time"
             onChange={changeHandler}
             value={formData.end_time}
-            className="w-full border rounded-md p-2"
+            className="w-full border border-gray-300 rounded-md p-2"
           />
         </div>
 
@@ -122,7 +120,7 @@ const AddBatch = () => {
             placeholder="Enter Start Date"
             onChange={changeHandler}
             value={formData.start_date}
-            className="w-full border rounded-md p-2"
+            className="w-full border border-gray-300 rounded-md p-2"
           />
         </div>
 
@@ -137,7 +135,7 @@ const AddBatch = () => {
             placeholder="Enter End Date"
             onChange={changeHandler}
             value={formData.end_date}
-            className="w-full border rounded-md p-2"
+            className="w-full border border-gray-300 rounded-md p-2"
           />
         </div>
 
@@ -150,9 +148,9 @@ const AddBatch = () => {
             id="course"
             onChange={changeHandler}
             value={formData.course}
-            className="w-full border rounded-md p-2"
+            className="w-full border border-gray-300 rounded-md p-2"
           >
-            <option value="">Select any course</option>
+            <option value="">Select a course</option>
             {allCourses.map((element) => (
               <option key={element._id} value={element._id}>
                 {element.course_name}
@@ -170,9 +168,9 @@ const AddBatch = () => {
             id="instructor"
             onChange={changeHandler}
             value={formData.instructor}
-            className="w-full border rounded-md p-2"
+            className="w-full border border-gray-300 rounded-md p-2"
           >
-            <option value="">Select Instructor</option>
+            <option value="">Select an instructor</option>
             {instructors.map((element) => (
               <option key={element._id} value={element._id}>
                 {element.fname + " " + element.lname}
@@ -181,7 +179,10 @@ const AddBatch = () => {
           </select>
         </div>
 
-        <button type="submit" className="btn border rounded-md py-2 px-4 mt-4">
+        <button
+          type="submit"
+          className="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-4"
+        >
           Create Batch
         </button>
       </form>

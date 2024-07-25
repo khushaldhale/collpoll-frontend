@@ -34,10 +34,10 @@ const StudentsByBatch = () => {
 
     dispatch(particularBatch({ batchId })).then((data) => {
       if (data.payload.success) {
-        console.log(" all data is fethced succesully");
+        console.log(" all data is fetched successfully");
       }
     });
-  }, []);
+  }, [dispatch, batchId]);
 
   function changeHandler(event) {
     const { name, value } = event.target;
@@ -66,7 +66,7 @@ const StudentsByBatch = () => {
 
       <div className="space-y-4">
         {requiredPath === "attendance" && (
-          <form method="POST" className="space-y-2">
+          <form method="POST" className="space-y-4">
             <div className="flex flex-col space-y-2">
               <input
                 type="month"
@@ -127,7 +127,7 @@ const StudentsByBatch = () => {
           studentsByBatch.map((student) => (
             <div
               key={student._id}
-              className="bg-white shadow-md rounded-lg p-4"
+              className="bg-white shadow-md rounded-lg p-6"
             >
               <h3 className="text-xl font-semibold mb-2">
                 {student.fname} {student.lname}
@@ -137,7 +137,7 @@ const StudentsByBatch = () => {
                   <button
                     type="button"
                     onClick={(event) => submitHandler(event, student._id, true)}
-                    className="btn border rounded-md py-2 px-4 w-full"
+                    className="bg-green-500 text-white rounded-md py-2 px-4 w-full hover:bg-green-600 transition duration-300"
                   >
                     Mark Present
                   </button>
@@ -146,7 +146,7 @@ const StudentsByBatch = () => {
                     onClick={(event) =>
                       submitHandler(event, student._id, false)
                     }
-                    className="btn border rounded-md py-2 px-4 w-full"
+                    className="bg-red-500 text-white rounded-md py-2 px-4 w-full hover:bg-red-600 transition duration-300"
                   >
                     Mark Absent
                   </button>

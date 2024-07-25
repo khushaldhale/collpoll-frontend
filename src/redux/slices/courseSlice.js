@@ -49,7 +49,7 @@ export const createCourse = createAsyncThunk("createCourse", async (data) => {
 	})
 
 	const result = await response.json();
-	console.log("course creation ", result)
+	console.log("course creation  data ", result)
 	return result
 })
 

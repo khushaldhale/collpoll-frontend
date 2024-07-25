@@ -85,8 +85,8 @@ export const feedbackSlice = createSlice(
 			})
 
 			builder.addCase(instructorPerformanceViaBatch.fulfilled, (state, action) => {
-				console.log("performance is ", action.payload.data)
-				state.performance = action.payload.data[0].averageRating;
+				console.log("performance is ", action.payload)
+				state.performance = action.payload.data[0]?.averageRating;
 
 			})
 		}

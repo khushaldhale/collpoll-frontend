@@ -6,9 +6,9 @@ import {
 } from "../../../redux/slices/feedbackSlice";
 
 const Feedback = () => {
-  const not_submitted_feedback = useSelector((state) => {
-    return state.feedback.feedback_not_submitted;
-  });
+  const not_submitted_feedback = useSelector(
+    (state) => state.feedback.feedback_not_submitted
+  );
 
   const [formData, setFormData] = useState({
     rating: undefined,
@@ -19,55 +19,78 @@ const Feedback = () => {
 
   useEffect(() => {
     dispatch(notSubmittedFeedback()).then((data) => {
-      console.log(data);
       if (data.payload.success) {
-        console.log("all not submitted feedbacks are fetched");
+        console.log("All not submitted feedbacks are fetched");
       }
     });
-  }, []);
+  }, [dispatch]);
 
-  function changeHandler(event) {
-    const { type, name, value } = event.target;
+  const changeHandler = (event) => {
+    const { name, value } = event.target;
 
-    setFormData((prevData) => {
-      return {
-        ...prevData,
-        [name]: value,
-      };
-    });
-  }
-  function submitHandler(event, feedbackId) {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const submitHandler = (event, feedbackId) => {
     event.preventDefault();
-    formData.feedbackId = feedbackId;
-    dispatch(submitFeedback(formData)).then((data) => {
+    dispatch(submitFeedback({ ...formData, feedbackId })).then((data) => {
       if (data.payload.success) {
-        console.log("feedback is submitted succesfuly");
+        console.log("Feedback is submitted successfully");
       }
     });
-  }
+  };
 
   return (
-    <div>
-      <p>Feedbacks</p>
+    <div className="p-4 max-w-6xl mx-auto">
+      <h2 className="text-2xl font-semibold mb-6 text-center">Feedbacks</h2>
       {not_submitted_feedback.length > 0 ? (
-        not_submitted_feedback.map((element) => {
-          return (
-            <div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {not_submitted_feedback.map((element) => (
+            <div
+              key={element._id}
+              className="bg-white shadow-md rounded-lg p-6 flex flex-col space-y-4"
+            >
               <form
                 method="post"
-                onSubmit={(event) => {
-                  submitHandler(event, element._id);
-                }}
+                onSubmit={(event) => submitHandler(event, element._id)}
+                className="space-y-4"
               >
-                <input type="text" readOnly value={element.subject.sub_name} />
-                <input type="text" readOnly value={element.topic.topic_name} />
-                <input
-                  type="text"
-                  readOnly
-                  value={
-                    element.instructor.fname + " " + element.instructor.lname
-                  }
-                />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Subject
+                  </label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={element.subject.sub_name}
+                    className="block w-full text-lg text-gray-700 border border-gray-300 rounded-md shadow-sm p-3"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Topic
+                  </label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={element.topic.topic_name}
+                    className="block w-full text-lg text-gray-700 border border-gray-300 rounded-md shadow-sm p-3"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Instructor Name
+                  </label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={`${element.instructor.fname} ${element.instructor.lname}`}
+                    className="block w-full text-lg text-gray-700 border border-gray-300 rounded-md shadow-sm p-3"
+                  />
+                </div>
                 <input
                   type="number"
                   max={10}
@@ -75,6 +98,7 @@ const Feedback = () => {
                   id="rating"
                   placeholder="Enter Ratings"
                   onChange={changeHandler}
+                  className="block w-full text-lg text-gray-700 border border-gray-300 rounded-md shadow-sm p-3"
                 />
                 <input
                   type="text"
@@ -82,15 +106,20 @@ const Feedback = () => {
                   id="reviews"
                   placeholder="Enter Reviews"
                   onChange={changeHandler}
+                  className="block w-full text-lg text-gray-700 border border-gray-300 rounded-md shadow-sm p-3"
                 />
-
-                <button type="submit"> Submit Feedback</button>
+                <button
+                  type="submit"
+                  className="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                >
+                  Submit Feedback
+                </button>
               </form>
             </div>
-          );
-        })
+          ))}
+        </div>
       ) : (
-        <p> No feedbacks remained</p>
+        <p className="text-gray-700 text-center">No feedbacks remaining</p>
       )}
     </div>
   );

@@ -4,13 +4,12 @@ import { studentInfo } from "../../redux/slices/studentSlice";
 
 const BatchAllocated = () => {
   const student = useSelector((state) => state.student.student);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(studentInfo()).then((data) => {
       if (data.payload.success) {
-        console.log("student data is fetched");
+        console.log("Student data is fetched");
       }
     });
   }, [dispatch]);
@@ -20,29 +19,45 @@ const BatchAllocated = () => {
       <h2 className="text-2xl font-semibold mb-6 text-center">
         Batch Allocated
       </h2>
-      <div className="bg-white shadow-md rounded-lg p-6 flex flex-col space-y-4">
+      <div className="bg-white shadow-md rounded-lg p-6 space-y-4">
         {student ? (
           <>
             <p className="text-lg font-semibold">
-              {"Batch Name : " + student.batch_allocated.batch_name}
+              Batch Name:{" "}
+              <span className="font-normal">
+                {student.batch_allocated.batch_name}
+              </span>
             </p>
             <p className="text-gray-700">
-              {"Start Date : " + student.batch_allocated.start_date}
+              Start Date:{" "}
+              <span className="font-normal">
+                {student.batch_allocated.start_date.split("T")[0]}
+              </span>
             </p>
             <p className="text-gray-700">
-              {"End Date : " + student.batch_allocated.end_date}
+              End Date:{" "}
+              <span className="font-normal">
+                {student.batch_allocated.end_date.split("T")[0]}
+              </span>
             </p>
             <p className="text-gray-700">
-              {"Start Time : " + student.batch_allocated.start_time}
+              Start Time:{" "}
+              <span className="font-normal">
+                {student.batch_allocated.start_time.split("T")[0]}
+              </span>
             </p>
             <p className="text-gray-700">
-              {"End Time : " + student.batch_allocated.end_time}
+              End Time:{" "}
+              <span className="font-normal">
+                {student.batch_allocated.end_time.split("T")[0]}
+              </span>
             </p>
             <p className="text-gray-700">
-              {"Instructor Name : " +
-                student.batch_allocated.instructor.fname +
-                " " +
-                student.batch_allocated.instructor.lname}
+              Instructor Name:{" "}
+              <span className="font-normal">
+                {student.batch_allocated.instructor.fname}{" "}
+                {student.batch_allocated.instructor.lname}
+              </span>
             </p>
           </>
         ) : (

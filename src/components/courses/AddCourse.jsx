@@ -5,6 +5,8 @@ import { createCourse } from "../../redux/slices/courseSlice";
 
 const AddCourse = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { categoryId } = useParams();
 
   // capturing whole data
   const [formData, setFormData] = useState({
@@ -13,6 +15,7 @@ const AddCourse = () => {
     lumpsum_price: "",
     installment_price: "",
     number_of_installment: "",
+    isInstallment: false,
     installments: [],
     iterate: [],
   });
@@ -23,87 +26,54 @@ const AddCourse = () => {
     due_day: "",
   });
 
-  // over onchange of installment
   // capturing amount and due_day
   function installmentHandler(event) {
-    const { type, name, value } = event.target;
-    console.log(name + " " + value);
-
-    setInstallmentData((prevData) => {
-      return {
-        ...prevData,
-        [name]: value,
-      };
-    });
+    const { name, value } = event.target;
+    setInstallmentData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   }
 
-  // over create  installment pushing  the installmentData into
-  // installments of formData, here worki is done
+  // pushing the installmentData into installments of formData
   function submitInstallment(event) {
     console.log(installmentData);
-    const data = formData.installments.map((element) => {
-      return element;
-    });
-
-    data.push(installmentData);
-    console.log("required array ", data);
-
-    setFormData((prevData) => {
-      return {
-        ...prevData,
-        installments: data,
-      };
-    });
+    event.preventDefault();
+    setFormData((prevData) => ({
+      ...prevData,
+      installments: [...prevData.installments, installmentData],
+    }));
+    setInstallmentData({ amount: "", due_day: "" }); // reset installment data after submission
   }
 
-  const { categoryId } = useParams();
-  const navigate = useNavigate();
-
-  //  capturing all required data
+  // capturing all required data
   function changeHandler(event) {
-    const { name, checked, type, value } = event.target;
+    const { name, type, value } = event.target;
 
-    // this is done so that installments array can have value so that we can iterate that many times
-    // and for that many iteration we can create installments
+    console.log(name + "  ", value + " " + event.target?.checked);
     if (name === "number_of_installment") {
-      // empty array
-      const arr = [];
-
-      for (let i = 1; i <= value; i++) {
-        arr.push(i); // filling  array that many times so that we can iterate
-      }
-      console.log(" arr is ", arr);
-      setFormData((prevData) => {
-        return {
-          ...prevData,
-          [name]: value,
-          iterate: arr, // mapped array , so that we can iterate
-        };
-      });
+      const iterate = Array.from({ length: value }, (_, i) => i + 1);
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+        iterate,
+      }));
     } else {
       setFormData((prevData) => ({
         ...prevData,
-        [name]: type === "checkbox" ? checked : value,
+        [name]: type === "checkbox" ? event.target.checked : value,
       }));
     }
   }
 
-  //  submitting course, makinga call to an API
+  // submitting course
   function submitHandler(event) {
     event.preventDefault();
-    formData.categoryId = categoryId;
-
-    console.log(formData);
-
-    dispatch(createCourse(formData)).then((data) => {
+    dispatch(createCourse({ ...formData, categoryId })).then((data) => {
       if (data.payload.success) {
         navigate(-1);
       }
     });
-  }
-
-  function solve() {
-    return <p> hello</p>;
   }
 
   return (
@@ -142,72 +112,103 @@ const AddCourse = () => {
           />
         </div>
         <div className="flex flex-col">
-          <label htmlFor="course_price" className="text-sm font-medium mb-1">
+          <label htmlFor="lumpsum_price" className="text-sm font-medium mb-1">
             Lumpsum Course Price
           </label>
           <input
             type="number"
             id="lumpsum_price"
             name="lumpsum_price"
-            placeholder="Enter one time  course price"
+            placeholder="Enter one time course price"
             onChange={changeHandler}
             value={formData.lumpsum_price}
             className="border border-gray-300 rounded-lg p-2"
           />
-
-          <label htmlFor="course_price" className="text-sm font-medium mb-1">
-            Installment Price
-          </label>
-          <input
-            type="number"
-            id="installment_price"
-            name="installment_price"
-            placeholder="Enter Installment course price"
-            onChange={changeHandler}
-            value={formData.installment_price}
-            className="border border-gray-300 rounded-lg p-2"
-          />
-
-          <label htmlFor="course_price" className="text-sm font-medium mb-1">
-            Number of Installment
-          </label>
-          <input
-            type="number"
-            id="number_of_installment"
-            name="number_of_installment"
-            placeholder="Enter Number of Installment"
-            onChange={changeHandler}
-            value={formData.number_of_installment}
-            className="border border-gray-300 rounded-lg p-2"
-          />
         </div>
 
-        {formData.iterate.map((element) => {
-          return (
-            <div>
-              <input
-                type="number"
-                name="amount"
-                id="amount"
-                placeholder="Enter an Amount"
-                onChange={installmentHandler}
-              />
-              <input
-                type="number"
-                name="due_day"
-                id="due_day"
-                placeholder="Enter  installment due day"
-                onChange={installmentHandler}
-              />
+        {/* conditional rendering of installmnets  */}
+        <label htmlFor="isInstallment">Is Installment</label>
+        <input
+          type="checkbox"
+          name="isInstallment"
+          id="isInstallment"
+          checked={formData.isInstallment}
+          onChange={changeHandler}
+        />
 
-              <p onClick={submitInstallment}> create Installment</p>
+        {/*  putting condition for installments  */}
+
+        {formData.isInstallment && (
+          //  parent tag
+          <div>
+            <div className="flex flex-col">
+              <label
+                htmlFor="installment_price"
+                className="text-sm font-medium mb-1"
+              >
+                Installment Price
+              </label>
+              <input
+                type="number"
+                id="installment_price"
+                name="installment_price"
+                placeholder="Enter installment course price"
+                onChange={changeHandler}
+                value={formData.installment_price}
+                className="border border-gray-300 rounded-lg p-2"
+              />
             </div>
-          );
-        })}
+            <div className="flex flex-col">
+              <label
+                htmlFor="number_of_installment"
+                className="text-sm font-medium mb-1"
+              >
+                Number of Installments
+              </label>
+              <input
+                type="number"
+                id="number_of_installment"
+                name="number_of_installment"
+                placeholder="Enter number of installments"
+                onChange={changeHandler}
+                value={formData.number_of_installment}
+                className="border border-gray-300 rounded-lg p-2"
+              />
+            </div>
+            {formData.iterate.map((element, index) => (
+              <div key={index} className="flex space-x-4 mb-2">
+                <input
+                  type="number"
+                  name="amount"
+                  id="amount"
+                  placeholder="Enter an amount"
+                  onChange={installmentHandler}
+                  // value={installmentData.amount}
+                  className="border border-gray-300 rounded-lg p-2 w-full"
+                />
+                <input
+                  type="number"
+                  name="due_day"
+                  id="due_day"
+                  placeholder="Enter installment due day"
+                  onChange={installmentHandler}
+                  // value={installmentData.due_day}
+                  className="border border-gray-300 rounded-lg p-2 w-full"
+                />
+                <button
+                  onClick={submitInstallment}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                >
+                  Create Installment
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
 
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 w-full"
         >
           Submit
         </button>

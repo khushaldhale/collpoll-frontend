@@ -28,7 +28,7 @@ const Subject = () => {
               `/dashboard/admin/categories/${categoryId}/courses/${courseId}/sub/add`
             )
           }
-          className="border rounded-lg py-2 px-4 hover:bg-gray-200"
+          className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
         >
           Add Subject
         </button>
@@ -49,7 +49,7 @@ const Subject = () => {
                       `/dashboard/admin/categories/${categoryId}/courses/${courseId}/sub/${element._id}/update`
                     )
                   }
-                  className="border rounded-lg py-2 px-4 w-full hover:bg-gray-200 text-center"
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg "
                 >
                   Update Sub
                 </button>
@@ -67,7 +67,7 @@ const Subject = () => {
                       }
                     });
                   }}
-                  className="border rounded-lg py-2 px-4 w-full hover:bg-gray-200 text-center"
+                  className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg "
                 >
                   Delete Sub
                 </button>
@@ -77,7 +77,7 @@ const Subject = () => {
                       `/dashboard/admin/categories/${categoryId}/courses/${courseId}/sub/${element._id}/topics`
                     )
                   }
-                  className="border rounded-lg py-2 px-4 w-full hover:bg-gray-200 text-center"
+                  className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg "
                 >
                   View All Topics
                 </button>

@@ -143,9 +143,12 @@ export const studentSlice = createSlice(
 			})
 
 			builder.addCase(allStudentsByBatch.fulfilled, (state, action) => {
+				console.log("by batch", action.payload)
 				state.allStudents = [...action.payload.data]
 			})
 			builder.addCase(allStudentsByCourse.fulfilled, (state, action) => {
+				console.log("by course", action.payload)
+
 				state.allStudents = [...action.payload.data]
 			})
 

@@ -46,7 +46,7 @@ const UploadStudyMaterial = () => {
     event.preventDefault();
     dispatch(createStudyMaterial(formData)).then((data) => {
       if (data.payload.success) {
-        navigate(-1);
+        navigate(`/dashboard/instructor/batches/${batchId}/study`);
       }
     });
   }

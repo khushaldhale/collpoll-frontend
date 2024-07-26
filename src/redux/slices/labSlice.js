@@ -1,71 +1,130 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-export const getAllLabs = createAsyncThunk("getAllLabs", async (data) => {
-	const response = await fetch("http://localhost:4000/api/v1/labs", {
-		method: "GET",
-		credentials: "include"
-	})
+export const getAllLabs = createAsyncThunk("getAllLabs", async (_, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/labs`, {
+			method: "GET",
+			credentials: "include",
+		});
 
-	const result = await response.json()
-	return result;
-})
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData);
+		}
 
+		return await response.json();
+	} catch (error) {
+		return rejectWithValue(error.message);
+	}
+});
 
-export const createLab = createAsyncThunk("createLab", async (data) => {
-	const response = await fetch("http://localhost:4000/api/v1/labs", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify(data),
-		credentials: "include"
-	})
+export const createLab = createAsyncThunk("createLab", async (data, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/labs`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(data),
+			credentials: "include",
+		});
 
-	const result = await response.json()
-	return result;
-})
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData);
+		}
 
+		return await response.json();
+	} catch (error) {
+		return rejectWithValue(error.message);
+	}
+});
 
+export const deleteLab = createAsyncThunk("deleteLab", async (data, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/labs/${data.labId}`, {
+			method: "DELETE",
+			credentials: "include",
+		});
 
-export const deleteLab = createAsyncThunk("deleteLab", async (data) => {
-	const response = await fetch(`http://localhost:4000/api/v1/labs/${data.labId}`, {
-		method: "DELETE",
-		credentials: "include"
-	})
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData);
+		}
 
-	const result = await response.json()
-	return result;
-})
-
+		return await response.json();
+	} catch (error) {
+		return rejectWithValue(error.message);
+	}
+});
 
 const initialState = {
-	labs: []
-}
+	labs: [],
+	isLoading: false,
+	isError: false,
+	errorMessage: "",
+};
 
-export const labSlice = createSlice(
-	{
-		name: "lab",
-		initialState,
-		extraReducers: (builder) => {
-			builder.addCase(getAllLabs.fulfilled, (state, action) => {
-				state.labs = [...action.payload.data]
+export const labSlice = createSlice({
+	name: "lab",
+	initialState,
+	extraReducers: (builder) => {
+		builder
+			.addCase(getAllLabs.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
 			})
-
-			builder.addCase(createLab.fulfilled, (state, action) => {
-				state.labs.push(action.payload.data)
+			.addCase(getAllLabs.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.labs = [...action.payload.data];
+				toast.success("Labs fetched successfully");
 			})
-			builder.addCase(deleteLab.fulfilled, (state, action) => {
-				const index = state.labs.findIndex((element) => {
-					return element._id == action.payload.data._id
-				})
-
-				state.labs.splice(index, 1)
+			.addCase(getAllLabs.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error fetching labs: ${action.payload}`);
 			})
+			.addCase(createLab.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
+			})
+			.addCase(createLab.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.labs.push(action.payload.data);
+				toast.success("Lab created successfully");
+			})
+			.addCase(createLab.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error creating lab: ${action.payload}`);
+			})
+			.addCase(deleteLab.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
+			})
+			.addCase(deleteLab.fulfilled, (state, action) => {
+				state.isLoading = false;
+				const index = state.labs.findIndex((element) => element._id === action.payload.data._id);
+				if (index !== -1) {
+					state.labs.splice(index, 1);
+				}
+				toast.success("Lab deleted successfully");
+			})
+			.addCase(deleteLab.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error deleting lab: ${action.payload}`);
+			});
+	},
+});
 
-		}
-	}
-)
-
-export default labSlice.reducer
-
+export default labSlice.reducer;

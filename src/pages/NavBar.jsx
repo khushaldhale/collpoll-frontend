@@ -8,7 +8,7 @@ const NavBar = () => {
   const toggleMenu = () => setIsOpen(!isOpen);
 
   return (
-    <nav className="navbar bg-white shadow-md">
+    <nav className="navbar bg-white shadow-md fixed top-0 left-0 w-full z-50">
       <div className="container mx-auto flex items-center justify-between p-4">
         <Link to="/" className="navbar-brand text-xl font-bold text-gray-800">
           Brand

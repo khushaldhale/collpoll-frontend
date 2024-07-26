@@ -12,7 +12,6 @@ const UpdateTopic = () => {
   });
 
   const navigate = useNavigate();
-
   const { categoryId, courseId, subjectId, topicId } = useParams();
 
   useEffect(() => {
@@ -53,7 +52,7 @@ const UpdateTopic = () => {
       <h2 className="text-2xl font-semibold mb-6 text-center">Update Topic</h2>
       <form
         onSubmit={submitHandler}
-        className="bg-white shadow-md rounded-lg p-6"
+        className="bg-white shadow-md rounded-lg p-6 space-y-4"
       >
         <div className="mb-4">
           <label
@@ -69,7 +68,7 @@ const UpdateTopic = () => {
             placeholder="Enter topic name"
             onChange={changeHandler}
             value={formData.topic_name}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="w-full border rounded-lg p-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
         <div className="mb-4">
@@ -86,7 +85,7 @@ const UpdateTopic = () => {
             placeholder="Enter topic description"
             onChange={changeHandler}
             value={formData.topic_desc}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="w-full border rounded-lg p-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
         <div className="mb-4">
@@ -103,7 +102,7 @@ const UpdateTopic = () => {
             placeholder="Enter duration"
             onChange={changeHandler}
             value={formData.duration}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="w-full border rounded-lg p-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
         <div className="flex justify-center">

@@ -20,6 +20,8 @@ const StudentsByBatch = () => {
     topicId: "",
     student_id: "",
     isPresent: undefined,
+    subject: "",
+    topic: "",
   });
 
   const path = location.pathname.split("/");
@@ -34,23 +36,42 @@ const StudentsByBatch = () => {
 
     dispatch(particularBatch({ batchId })).then((data) => {
       if (data.payload.success) {
-        console.log(" all data is fethced succesully");
+        console.log(" all data is fetched successfully");
       }
     });
-  }, []);
+  }, [dispatch, batchId]);
 
   function changeHandler(event) {
     const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+
+    if (name === "subjectId" || name === "topicId") {
+      const selectedOption = event.target.option[event.target.selectedIndex];
+      if (name === "subjectId") {
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: value,
+          subject: selectedOption.getAttribute("data-sub"),
+        }));
+      } else {
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: value,
+          topic: selectedOption.getAttribute("data-topic"),
+        }));
+      }
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   }
 
   function submitHandler(event, student_id, presence) {
     event.preventDefault();
     formData.student_id = student_id;
     formData.isPresent = presence;
+    console.log(formData);
     if (requiredPath === "attendance") {
       dispatch(markAttendance(formData)).then((data) => {
         if (data.payload.success) {
@@ -66,7 +87,7 @@ const StudentsByBatch = () => {
 
       <div className="space-y-4">
         {requiredPath === "attendance" && (
-          <form method="POST" className="space-y-2">
+          <form method="POST" className="space-y-4">
             <div className="flex flex-col space-y-2">
               <input
                 type="month"
@@ -98,7 +119,11 @@ const StudentsByBatch = () => {
                 <option value="">Select Subject</option>
                 {singleBatch &&
                   singleBatch.course.sub.map((sub) => (
-                    <option key={sub._id} value={sub._id}>
+                    <option
+                      key={sub._id}
+                      value={sub._id}
+                      data-sub={sub.sub_name}
+                    >
                       {sub.sub_name}
                     </option>
                   ))}
@@ -115,7 +140,11 @@ const StudentsByBatch = () => {
                   singleBatch.course.sub
                     .find((sub) => sub._id === formData.subjectId)
                     ?.topics.map((topic) => (
-                      <option key={topic._id} value={topic._id}>
+                      <option
+                        key={topic._id}
+                        value={topic._id}
+                        data-topic={topic.topic_name}
+                      >
                         {topic.topic_name}
                       </option>
                     ))}
@@ -127,7 +156,7 @@ const StudentsByBatch = () => {
           studentsByBatch.map((student) => (
             <div
               key={student._id}
-              className="bg-white shadow-md rounded-lg p-4"
+              className="bg-white shadow-md rounded-lg p-6"
             >
               <h3 className="text-xl font-semibold mb-2">
                 {student.fname} {student.lname}
@@ -137,7 +166,7 @@ const StudentsByBatch = () => {
                   <button
                     type="button"
                     onClick={(event) => submitHandler(event, student._id, true)}
-                    className="btn border rounded-md py-2 px-4 w-full"
+                    className="bg-green-500 text-white rounded-md py-2 px-4 w-full hover:bg-green-600 transition duration-300"
                   >
                     Mark Present
                   </button>
@@ -146,7 +175,7 @@ const StudentsByBatch = () => {
                     onClick={(event) =>
                       submitHandler(event, student._id, false)
                     }
-                    className="btn border rounded-md py-2 px-4 w-full"
+                    className="bg-red-500 text-white rounded-md py-2 px-4 w-full hover:bg-red-600 transition duration-300"
                   >
                     Mark Absent
                   </button>

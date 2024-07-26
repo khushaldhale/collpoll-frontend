@@ -1,142 +1,274 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-export const createSub = createAsyncThunk("createSub", async (data) => {
-	const { categoryId, courseId } = data;
-	const response = await fetch(
-		`http://localhost:4000/api/v1/categories/${categoryId}/courses/${courseId}/sub`,
-		{
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(data),
-			credentials: "include",
+// Thunks
+
+export const createSub = createAsyncThunk(
+	"createSub",
+	async (data, { rejectWithValue }) => {
+		try {
+			const { categoryId, courseId } = data;
+			const response = await fetch(`${BACKEND_URL}/categories/${categoryId}/courses/${courseId}/sub`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data),
+				credentials: "include",
+			});
+
+			if (!response.ok) {
+				const errorData = await response.json();
+				return rejectWithValue(errorData);
+			}
+
+			const result = await response.json();
+			toast.success("Subject created successfully!");
+			return result;
+		} catch (error) {
+			return rejectWithValue(error.message);
 		}
-	);
+	}
+);
 
-	const result = await response.json();
-	return result;
-});
+export const subByCategory = createAsyncThunk(
+	"subByCategory",
+	async (data, { rejectWithValue }) => {
+		try {
+			const { categoryId, courseId } = data;
+			const response = await fetch(`${BACKEND_URL}/categories/${categoryId}/courses/${courseId}/sub`, {
+				method: "GET",
+				credentials: "include",
+			});
 
-export const subByCategory = createAsyncThunk("subByCategory", async (data) => {
-	const { categoryId, courseId } = data;
+			if (!response.ok) {
+				const errorData = await response.json();
+				return rejectWithValue(errorData);
+			}
 
-	const response = await fetch(
-		`http://localhost:4000/api/v1/categories/${categoryId}/courses/${courseId}/sub`,
-		{
-			method: "GET",
-			credentials: "include",
+			const result = await response.json();
+			return result;
+		} catch (error) {
+			return rejectWithValue(error.message);
 		}
-	);
-	const result = await response.json();
+	}
+);
 
-	return result;
-});
+export const deleteSub = createAsyncThunk(
+	"deleteSub",
+	async (data, { rejectWithValue }) => {
+		try {
+			const { categoryId, courseId, subjectId } = data;
+			const response = await fetch(`${BACKEND_URL}/categories/${categoryId}/courses/${courseId}/sub/${subjectId}`, {
+				method: "DELETE",
+				credentials: "include",
+			});
 
-export const deleteSub = createAsyncThunk("deleteSub", async (data) => {
-	const { categoryId, courseId, subjectId } = data;
+			if (!response.ok) {
+				const errorData = await response.json();
+				return rejectWithValue(errorData);
+			}
 
-	const response = await fetch(
-		`http://localhost:4000/api/v1/categories/${categoryId}/courses/${courseId}/sub/${subjectId}`,
-		{
-			method: "DELETE",
-			credentials: "include",
+			const result = await response.json();
+			toast.success("Subject deleted successfully!");
+			return result;
+		} catch (error) {
+			return rejectWithValue(error.message);
 		}
-	);
-	const result = await response.json();
+	}
+);
 
-	return result;
-});
+export const updateSub = createAsyncThunk(
+	"updateSub",
+	async (data, { rejectWithValue }) => {
+		try {
+			const { categoryId, courseId, subjectId } = data;
+			const response = await fetch(`${BACKEND_URL}/categories/${categoryId}/courses/${courseId}/sub/${subjectId}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data),
+				credentials: "include",
+			});
 
-export const updateSub = createAsyncThunk("updateSub", async (data) => {
-	const { categoryId, courseId, subjectId } = data;
+			if (!response.ok) {
+				const errorData = await response.json();
+				return rejectWithValue(errorData);
+			}
 
-	const response = await fetch(
-		`http://localhost:4000/api/v1/categories/${categoryId}/courses/${courseId}/sub/${subjectId}`,
-		{
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(data),
-			credentials: "include",
+			const result = await response.json();
+			toast.success("Subject updated successfully!");
+			return result;
+		} catch (error) {
+			console.log("error occured")
+			return rejectWithValue(error.message);
 		}
-	);
-	const result = await response.json();
+	}
+);
 
-	return result;
-});
+export const subByCourse = createAsyncThunk(
+	"subByCourse",
+	async (data, { rejectWithValue }) => {
+		try {
+			const { courseId } = data;
+			const response = await fetch(`${BACKEND_URL}/subjects/${courseId._id}`, {
+				method: "GET",
+				credentials: "include",
+			});
 
+			if (!response.ok) {
+				const errorData = await response.json();
+				return rejectWithValue(errorData);
+			}
 
-// fetch the sub via course only
-
-export const subByCourse = createAsyncThunk("subByCourse", async (data) => {
-	//courseId it is an  object here not ID total object is sent 
-	const { courseId } = data;
-	const response = await fetch(
-		`http://localhost:4000/api/v1/subjects/${courseId._id}`, // given  id here now
-		{
-			method: "GET",
-			credentials: "include",
+			const result = await response.json();
+			return result;
+		} catch (error) {
+			return rejectWithValue(error.message);
 		}
-	);
-	const result = await response.json();
+	}
+);
 
-	return result;
-});
+export const particularSub = createAsyncThunk(
+	"particularSub",
+	async (data, { rejectWithValue }) => {
+		try {
+			const { subjectId } = data;
+			const response = await fetch(`${BACKEND_URL}/sub/${subjectId}`, {
+				method: "GET",
+				credentials: "include",
+			});
 
-export const particularSub = createAsyncThunk("particularSub", async (data) => {
-	const { subjectId } = data;
+			if (!response.ok) {
+				const errorData = await response.json();
+				return rejectWithValue(errorData);
+			}
 
-	const response = await fetch(
-		`http://localhost:4000/api/v1/sub/${subjectId}`,
-		{
-			method: "GET",
-			credentials: "include",
+			const result = await response.json();
+			return result;
+		} catch (error) {
+			return rejectWithValue(error.message);
 		}
-	);
-	const result = await response.json();
+	}
+);
 
-	return result;
-});
-
+// Initial State
 
 const initialState = {
 	subjects: [],
-	subByCourse: []
+	subByCourse: [],
+	isLoading: false,
+	isError: false,
+	errorMessage: "",
 };
+
+// Slice
 
 export const subjectSlice = createSlice({
 	name: "subject",
 	initialState,
+	reducers: {},
 	extraReducers: (builder) => {
-		builder.addCase(subByCategory.fulfilled, (state, action) => {
-			state.subjects = [...action.payload.data];
-		});
-		builder.addCase(createSub.fulfilled, (state, action) => {
-			state.subjects.push(action.payload.data);
-		});
-		builder.addCase(updateSub.fulfilled, (state, action) => {
-			const index = state.subjects.findIndex((element) => {
-				return element._id == action.payload.data._id;
+		builder
+			.addCase(subByCategory.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
+			})
+			.addCase(subByCategory.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.subjects = [...action.payload.data];
+			})
+			.addCase(subByCategory.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error fetching subjects by category: ${action.payload}`);
+			})
+			.addCase(createSub.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
+			})
+			.addCase(createSub.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.subjects.push(action.payload.data);
+			})
+			.addCase(createSub.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error creating subject: ${action.payload}`);
+			})
+			.addCase(updateSub.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
+			})
+			.addCase(updateSub.fulfilled, (state, action) => {
+				state.isLoading = false;
+				const index = state.subjects.findIndex((element) => element._id === action.payload.data._id);
+				if (index !== -1) {
+					state.subjects[index] = action.payload.data;
+				}
+			})
+			.addCase(updateSub.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error updating subject: ${action.payload}`);
+			})
+			.addCase(deleteSub.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
+			})
+			.addCase(deleteSub.fulfilled, (state, action) => {
+				state.isLoading = false;
+				const index = state.subjects.findIndex((element) => element._id === action.payload.data._id);
+				if (index !== -1) {
+					state.subjects.splice(index, 1);
+				}
+			})
+			.addCase(deleteSub.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error deleting subject: ${action.payload}`);
+			})
+			.addCase(subByCourse.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
+			})
+			.addCase(subByCourse.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.subByCourse = [...action.payload.data];
+			})
+			.addCase(subByCourse.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error fetching subjects by course: ${action.payload}`);
+			})
+			.addCase(particularSub.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
+			})
+			.addCase(particularSub.fulfilled, (state, action) => {
+				state.isLoading = false;
+				console.log("particular subject is fetched ", action.payload.data);
+			})
+			.addCase(particularSub.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error fetching particular subject: ${action.payload}`);
 			});
-
-			state.subjects[index] = action.payload.data;
-		});
-		builder.addCase(deleteSub.fulfilled, (state, action) => {
-			const index = state.subjects.findIndex((element) => {
-				return element._id == action.payload.data._id;
-			});
-			state.subjects.splice(index, 1);
-		});
-		builder.addCase(subByCourse.fulfilled, (state, action) => {
-			state.subByCourse = [...action.payload.data];
-		});
-		builder.addCase(particularSub.fulfilled, (state, action) => {
-			// not storing  aqnything in redux store
-			console.log("particular subject is fetched ", action.payload.data)
-		});
 	},
 });
 

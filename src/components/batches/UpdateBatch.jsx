@@ -86,13 +86,13 @@ const UpdateBatch = () => {
   }
 
   return (
-    <div className="update-batch-container p-4 max-w-full">
-      <h2 className="text-2xl font-semibold mb-4">Update Batch</h2>
+    <div className="update-batch-container p-4 max-w-2xl mx-auto">
+      <h2 className="text-2xl font-semibold mb-6 text-center">Update Batch</h2>
 
       <form
         method="post"
         onSubmit={submitHandler}
-        className="bg-white shadow-md rounded-lg p-6"
+        className="bg-white shadow-lg rounded-lg p-6"
       >
         <div className="form-group mb-4">
           <label htmlFor="batch_name" className="block text-gray-700 mb-2">
@@ -228,7 +228,10 @@ const UpdateBatch = () => {
           </select>
         </div>
 
-        <button type="submit" className="btn border rounded-md py-2 px-4 mt-4">
+        <button
+          type="submit"
+          className="btn bg-blue-500 text-white rounded-md py-2 px-4 mt-4 w-full hover:bg-blue-600"
+        >
           Update Batch
         </button>
       </form>

@@ -29,35 +29,36 @@ const StudyMaterial = () => {
 
       <div className="mb-6">
         {studyMaterials.length > 0 ? (
-          studyMaterials.map((material) => (
-            <div
-              key={material._id}
-              className="bg-white shadow-md rounded-lg p-4 mb-4 flex flex-col md:flex-row items-start md:items-center justify-between"
-            >
-              <div className="mb-4 md:mb-0">
-                {/* Uncomment below line if you want to show the image */}
-                {/* <img src={material.notes} alt="Study Material" className="w-full md:w-48 h-auto mb-4 rounded-md shadow-sm" /> */}
-                <p className="text-lg font-medium text-gray-800 mb-2">
-                  Subject: {material.subjectId}
-                </p>
-                {/* Show more information if needed */}
-              </div>
-              <button
-                onClick={() => {
-                  dispatch(
-                    deleteMaterial({ batchId, studyId: material._id })
-                  ).then((data) => {
-                    if (data.payload.success) {
-                      console.log("Notes are deleted successfully");
-                    }
-                  });
-                }}
-                className="btn border rounded-md py-2 px-4 bg-red-500 text-white hover:bg-red-600"
+          studyMaterials.map((material) => {
+            console.log("notes are ", material);
+
+            return (
+              <div
+                key={material._id}
+                className="bg-white shadow-md rounded-lg p-4 mb-4 flex flex-col md:flex-row items-start md:items-center justify-between"
               >
-                Delete Notes
-              </button>
-            </div>
-          ))
+                <div className="mb-4 md:mb-0">
+                  <p className="text-lg font-medium text-gray-800 mb-2">
+                    Subject: {material.subjectId?.sub_name}
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    dispatch(
+                      deleteMaterial({ batchId, studyId: material._id })
+                    ).then((data) => {
+                      if (data.payload.success) {
+                        console.log("Notes are deleted successfully");
+                      }
+                    });
+                  }}
+                  className="btn border rounded-md py-2 px-4 bg-red-500 text-white hover:bg-red-600"
+                >
+                  Delete Notes
+                </button>
+              </div>
+            );
+          })
         ) : (
           <p className="text-gray-500">Notes are not uploaded yet</p>
         )}

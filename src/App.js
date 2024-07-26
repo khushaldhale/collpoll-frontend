@@ -42,18 +42,20 @@ import CounsellorPerformance from './components/counselling/CounsellorPerformanc
 import Attendance from './components/instructor/attendance/Attendance';
 import AllStudents from './components/student/AllStudents';
 import AllEmployees from './components/admin/AllEmployees';
+import Feedback from './components/student/feedback/Feedback';
+import InstructorFeedback from './components/admin/InstructorFeedback';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 overflow-x-hidden">
       <NavBar />
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <div className="pt-16 max-w-screen mt-6 py-6">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/register/student" element={<StudentRegister />} />
           <Route path="/login" element={<Login />} />
-          <Route path='/student/create-password' element={<CreatePassword></CreatePassword>}></Route>
+          <Route path='/student/create-password' element={<CreatePassword />} />
           <Route path="/dashboard" element={<DashBoard />} />
           <Route path="/dashboard/admin" element={<AdminDashBoard />}>
             <Route path="categories" element={<Category />} />
@@ -73,14 +75,13 @@ function App() {
             <Route path="labs/:labId/batches" element={<Batches />} />
             <Route path="labs/:labId/batches/add" element={<AddBatch />} />
             <Route path="labs/:labId/batches/:batchId/update" element={<UpdateBatch />} />
-            <Route path='students' element={<AllStudents></AllStudents>}></Route>
-            <Route path='employees' element={<AllEmployees></AllEmployees>}></Route>
-
+            <Route path='students' element={<AllStudents />} />
+            <Route path='employees' element={<AllEmployees />} />
+            <Route path='instructor/feedbacks' element={<InstructorFeedback />} />
           </Route>
           <Route path="/dashboard/counsellor" element={<CounsellorDashBoard />}>
             <Route path="pending/counselling" element={<PendingCounselling />} />
             <Route path="performance" element={<CounsellorPerformance />} />
-
           </Route>
           <Route path="/dashboard/instructor" element={<InstructorDashBoard />}>
             <Route path="batches" element={<InstructoBatches />} />
@@ -91,20 +92,14 @@ function App() {
             <Route path="batches/:batchId/study/upload" element={<UploadStudyMaterial />} />
             <Route path="batches/attendance" element={<InstructoBatches />} />
             <Route path="batches/:batchId/students/attendance" element={<StudentsByBatch />} />
-            <Route path='attendance' element={<InstructoBatches></InstructoBatches>}></Route>
+            <Route path='attendance' element={<InstructoBatches />} />
           </Route>
-
-
-          <Route path='/dashboard/student' element={<StudentDashBoard></StudentDashBoard>}>
-            <Route path='enrolled-courses' element={<CourseEnrolled></CourseEnrolled>}></Route>
-            <Route path='batch-allocated' element={<BatchAllocated></BatchAllocated>}></Route>
-            <Route path='study-material' element={<StudentStudyMaterial></StudentStudyMaterial>}></Route>
+          <Route path='/dashboard/student' element={<StudentDashBoard />}>
+            <Route path='enrolled-courses' element={<CourseEnrolled />} />
+            <Route path='batch-allocated' element={<BatchAllocated />} />
+            <Route path='study-material' element={<StudentStudyMaterial />} />
+            <Route path='feedbacks' element={<Feedback />} />
           </Route>
-
-
-
-
-
         </Routes>
       </div>
       <ToastContainer />

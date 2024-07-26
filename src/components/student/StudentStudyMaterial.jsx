@@ -50,7 +50,7 @@ const StudentStudyMaterial = () => {
                   link.click();
                   document.body.removeChild(link);
                 }}
-                className="border rounded-lg py-2 px-4 hover:bg-gray-200"
+                className="border rounded-lg py-2 px-4 bg-blue-500 text-white hover:bg-blue-600 transition"
               >
                 Download PDF
               </button>

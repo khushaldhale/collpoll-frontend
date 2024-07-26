@@ -4,7 +4,6 @@ import { studentInfo } from "../../redux/slices/studentSlice";
 
 const CourseEnrolled = () => {
   const student = useSelector((state) => state.student.student);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -20,18 +19,20 @@ const CourseEnrolled = () => {
       <h2 className="text-2xl font-semibold mb-6 text-center">
         Course Enrolled
       </h2>
-      <div className="bg-white shadow-md rounded-lg p-6 flex flex-col space-y-4">
+      <div className="bg-white shadow-md rounded-lg p-6">
         {student ? (
           <>
-            <p className="text-lg font-semibold">
+            <h3 className="text-xl font-semibold mb-2">
               {student.course_enrolled.course_name}
-            </p>
-            <p className="text-gray-700">
+            </h3>
+            <p className="text-gray-700 mb-4">
               {student.course_enrolled.course_desc}
             </p>
-            <p className="text-gray-700">
-              {"Price: $" + student.course_enrolled.course_price}
-            </p>
+            <div className="text-center">
+              <button className="btn border rounded-md py-2 px-4 bg-blue-500 text-white hover:bg-blue-600">
+                View Course Details
+              </button>
+            </div>
           </>
         ) : (
           <p className="text-gray-700 text-center">No course enrolled yet</p>

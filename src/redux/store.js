@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import authSlice from "./slices/authSlice";
 import categorySlice from "./slices/categorySlice";
 import courseSlice from "./slices/courseSlice";
-import subjectReducer from "./slices/subjectSlice"; // Updated import
+import subjectReducer from "./slices/subjectSlice";
 import topicSlice from "./slices/topicSlice";
 import labSlice from "./slices/labSlice";
 import batchSlice from "./slices/batchSlice";
@@ -12,6 +12,9 @@ import instructorSlice from "./slices/instructorSlice";
 import studentSlice from "./slices/studentSlice";
 import studyMaterialSlice from "./slices/studyMaterialSlice";
 import counsellorSlice from "./slices/counsellorSlice";
+import feedbackSlice from "./slices/feedbackSlice";
+import installmentSlice from "./slices/installment";
+import courseEnrollmentSlice from "./slices/courseEnrollment";
 
 export const store = configureStore({
 	reducer: {
@@ -27,6 +30,9 @@ export const store = configureStore({
 		instructor: instructorSlice,
 		student: studentSlice,
 		studyMaterial: studyMaterialSlice,
-		counsellor: counsellorSlice	
+		counsellor: counsellorSlice,
+		feedback: feedbackSlice,
+		installment: installmentSlice,
+		courseEnrolllment: courseEnrollmentSlice
 	},
 });

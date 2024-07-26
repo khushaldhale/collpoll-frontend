@@ -29,9 +29,9 @@ const DashBoard = () => {
   }
 
   return (
-    <div className="dashboard-container min-h-screen flex w-full h-screen bg-gradient-to-r from-blue-400 to-purple-400 p-4">
-      <div className="w-full flex flex-col md:flex-row max-w-full bg-white shadow-lg rounded-lg p-6 md:p-8">
-        {Content}
+    <div className="dashboard-container min-h-[calc(100vh-7rem)] w-full flex flex-col md:flex-row">
+      <div className="content flex-1   min-h-[calc(100vh-7rem)]">
+        <div className="bg-white shadow-lg rounded-lg ">{Content}</div>
       </div>
     </div>
   );

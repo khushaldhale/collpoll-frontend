@@ -45,10 +45,16 @@ const Batches = () => {
                   {element.batch_name}
                 </h3>
                 <p className="text-gray-700 mb-1">
-                  Start Time: {element.start_time.split("T")[1]}
+                  Start Time:{" "}
+                  {element.start_time.split("T")[1].split(":")[0] +
+                    ":" +
+                    element.start_time.split("T")[1].split(":")[1]}
                 </p>
                 <p className="text-gray-700">
-                  End Time: {element.end_time.split("T")[1]}
+                  End Time:{" "}
+                  {element.end_time.split("T")[1].split(":")[0] +
+                    ":" +
+                    element.end_time.split("T")[1].split(":")[1]}
                 </p>
                 <p className="text-gray-700">
                   Start Date: {element.start_date.split("T")[0]}

@@ -48,6 +48,7 @@ const AddBatch = () => {
     event.preventDefault();
     formData.labId = labId;
 
+    console.log(formData);
     dispatch(createBatch(formData)).then((data) => {
       if (data.payload.success) {
         console.log("Batch created successfully");

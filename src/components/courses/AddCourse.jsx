@@ -8,7 +8,6 @@ const AddCourse = () => {
   const navigate = useNavigate();
   const { categoryId } = useParams();
 
-  // capturing whole data
   const [formData, setFormData] = useState({
     course_name: "",
     course_desc: "",
@@ -20,43 +19,20 @@ const AddCourse = () => {
     iterate: [],
   });
 
-  // capturing only installment data
-  const [installmentData, setInstallmentData] = useState({
-    amount: "",
-    due_day: "",
-  });
-
-  // capturing amount and due_day
-  function installmentHandler(event) {
-    const { name, value } = event.target;
-    setInstallmentData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  }
-
-  // pushing the installmentData into installments of formData
-  function submitInstallment(event) {
-    console.log(installmentData);
-    event.preventDefault();
-    setFormData((prevData) => ({
-      ...prevData,
-      installments: [...prevData.installments, installmentData],
-    }));
-    setInstallmentData({ amount: "", due_day: "" }); // reset installment data after submission
-  }
-
   // capturing all required data
   function changeHandler(event) {
     const { name, type, value } = event.target;
-
-    console.log(name + "  ", value + " " + event.target?.checked);
     if (name === "number_of_installment") {
       const iterate = Array.from({ length: value }, (_, i) => i + 1);
+      const installments = Array.from({ length: value }, () => ({
+        amount: "",
+        due_day: "",
+      }));
       setFormData((prevData) => ({
         ...prevData,
         [name]: value,
         iterate,
+        installments,
       }));
     } else {
       setFormData((prevData) => ({
@@ -64,6 +40,18 @@ const AddCourse = () => {
         [name]: type === "checkbox" ? event.target.checked : value,
       }));
     }
+  }
+
+  // capturing installment amount and due_day
+  function installmentHandler(event, index) {
+    const { name, value } = event.target;
+    const updatedInstallments = formData.installments.map((installment, idx) =>
+      idx === index ? { ...installment, [name]: value } : installment
+    );
+    setFormData((prevData) => ({
+      ...prevData,
+      installments: updatedInstallments,
+    }));
   }
 
   // submitting course
@@ -78,10 +66,12 @@ const AddCourse = () => {
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-semibold mb-6">Add New Course</h2>
+      <h2 className="text-2xl font-semibold mb-6 text-center">
+        Add New Course
+      </h2>
       <form
         onSubmit={submitHandler}
-        className="bg-white shadow-md rounded-lg p-6 space-y-4"
+        className="bg-white shadow-md rounded-lg p-6 space-y-6"
       >
         <div className="flex flex-col">
           <label htmlFor="course_name" className="text-sm font-medium mb-1">
@@ -101,8 +91,7 @@ const AddCourse = () => {
           <label htmlFor="course_desc" className="text-sm font-medium mb-1">
             Course Description
           </label>
-          <input
-            type="text"
+          <textarea
             id="course_desc"
             name="course_desc"
             placeholder="Enter course description"
@@ -119,28 +108,29 @@ const AddCourse = () => {
             type="number"
             id="lumpsum_price"
             name="lumpsum_price"
-            placeholder="Enter one time course price"
+            placeholder="Enter one-time course price"
             onChange={changeHandler}
             value={formData.lumpsum_price}
             className="border border-gray-300 rounded-lg p-2"
           />
         </div>
 
-        {/* conditional rendering of installmnets  */}
-        <label htmlFor="isInstallment">Is Installment</label>
-        <input
-          type="checkbox"
-          name="isInstallment"
-          id="isInstallment"
-          checked={formData.isInstallment}
-          onChange={changeHandler}
-        />
-
-        {/*  putting condition for installments  */}
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            name="isInstallment"
+            id="isInstallment"
+            checked={formData.isInstallment}
+            onChange={changeHandler}
+            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          />
+          <label htmlFor="isInstallment" className="text-sm font-medium">
+            Is Installment
+          </label>
+        </div>
 
         {formData.isInstallment && (
-          //  parent tag
-          <div>
+          <div className="space-y-4">
             <div className="flex flex-col">
               <label
                 htmlFor="installment_price"
@@ -176,31 +166,43 @@ const AddCourse = () => {
               />
             </div>
             {formData.iterate.map((element, index) => (
-              <div key={index} className="flex space-x-4 mb-2">
-                <input
-                  type="number"
-                  name="amount"
-                  id="amount"
-                  placeholder="Enter an amount"
-                  onChange={installmentHandler}
-                  // value={installmentData.amount}
-                  className="border border-gray-300 rounded-lg p-2 w-full"
-                />
-                <input
-                  type="number"
-                  name="due_day"
-                  id="due_day"
-                  placeholder="Enter installment due day"
-                  onChange={installmentHandler}
-                  // value={installmentData.due_day}
-                  className="border border-gray-300 rounded-lg p-2 w-full"
-                />
-                <button
-                  onClick={submitInstallment}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-                >
-                  Create Installment
-                </button>
+              <div key={index} className="flex flex-col space-y-2">
+                <div className="flex space-x-4">
+                  <div className="flex flex-col w-1/2">
+                    <label
+                      htmlFor={`amount_${index}`}
+                      className="text-sm font-medium mb-1"
+                    >
+                      Installment Amount
+                    </label>
+                    <input
+                      type="number"
+                      name="amount"
+                      id={`amount_${index}`}
+                      placeholder="Enter amount"
+                      onChange={(event) => installmentHandler(event, index)}
+                      value={formData.installments[index]?.amount || ""}
+                      className="border border-gray-300 rounded-lg p-2"
+                    />
+                  </div>
+                  <div className="flex flex-col w-1/2">
+                    <label
+                      htmlFor={`due_day_${index}`}
+                      className="text-sm font-medium mb-1"
+                    >
+                      Due Day
+                    </label>
+                    <input
+                      type="number"
+                      name="due_day"
+                      id={`due_day_${index}`}
+                      placeholder="Enter due day"
+                      onChange={(event) => installmentHandler(event, index)}
+                      value={formData.installments[index]?.due_day || ""}
+                      className="border border-gray-300 rounded-lg p-2"
+                    />
+                  </div>
+                </div>
               </div>
             ))}
           </div>

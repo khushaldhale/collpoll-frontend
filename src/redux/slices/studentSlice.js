@@ -1,159 +1,318 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
-export const addToBatch = createAsyncThunk("addToBatch", async (data) => {
-	const response = await fetch("http://localhost:4000/api/v1/student/add-to-batch", {
-		method: "PUT",
-		headers: {
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify(data),
-		credentials: "include"
-	})
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-	return await response.json()
-})
+export const addToBatch = createAsyncThunk("addToBatch", async (data, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/student/add-to-batch`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(data),
+			credentials: "include",
+		});
 
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData);
+		}
 
-export const notAllocatedBatch = createAsyncThunk("notAllocatedBatch", async () => {
-	const response = await fetch("http://localhost:4000/api/v1/students/no-batch-allocated", {
-		method: "GET",
-		credentials: "include"
-	})
+		return await response.json();
+	} catch (error) {
+		return rejectWithValue(error.message);
+	}
+});
 
-	return await response.json()
-})
+export const notAllocatedBatch = createAsyncThunk("notAllocatedBatch", async (_, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/students/no-batch-allocated`, {
+			method: "GET",
+			credentials: "include",
+		});
 
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData);
+		}
 
-export const getstudentsByBatch = createAsyncThunk("getstudentsByBatch", async (data) => {
-	const response = await fetch(`http://localhost:4000/api/v1/students/batches/${data.batchId}`, {
-		method: "GET",
-		credentials: "include"
-	})
+		return await response.json();
+	} catch (error) {
+		return rejectWithValue(error.message);
+	}
+});
 
-	return await response.json()
-})
+export const getstudentsByBatch = createAsyncThunk("getstudentsByBatch", async (data, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/students/batches/${data.batchId}`, {
+			method: "GET",
+			credentials: "include",
+		});
 
-export const studentInfo = createAsyncThunk("studentInfo", async () => {
-	const response = await fetch("http://localhost:4000/api/v1/students/info", {
-		method: "GET",
-		credentials: "include"
-	})
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData);
+		}
 
-	return await response.json()
-})
+		return await response.json();
+	} catch (error) {
+		return rejectWithValue(error.message);
+	}
+});
 
+export const studentInfo = createAsyncThunk("studentInfo", async (_, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/students/info`, {
+			method: "GET",
+			credentials: "include",
+		});
 
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData);
+		}
 
-//it shoudl  not be here but because of data manipulation we keep this thunk here
-export const markAttendance = createAsyncThunk("markAttendance", async (data) => {
-	const response = await fetch('http://localhost:4000/api/v1/attendance', {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify(data),
-		credentials: "include"
-	})
+		return await response.json();
+	} catch (error) {
+		return rejectWithValue(error.message);
+	}
+});
 
-	return await response.json();
-})
+export const markAttendance = createAsyncThunk("markAttendance", async (data, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/attendance`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(data),
+			credentials: "include",
+		});
 
-export const allStudents = createAsyncThunk("allStudents", async () => {
-	const response = await fetch("http://localhost:4000/api/v1/students/all", {
-		method: "GET",
-		credentials: "include"
-	})
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData);
+		}
 
-	return await response.json()
-})
+		return await response.json();
+	} catch (error) {
+		return rejectWithValue(error.message);
+	}
+});
 
+export const allStudents = createAsyncThunk("allStudents", async (_, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/students/all`, {
+			method: "GET",
+			credentials: "include",
+		});
 
-export const allStudentsByBatch = createAsyncThunk("allStudentsByBatch", async (data) => {
-	const response = await fetch(`http://localhost:4000/api/v1/batches/${data.batchId}/students/all`, {
-		method: "GET",
-		credentials: "include"
-	})
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData);
+		}
 
-	return await response.json()
-})
+		return await response.json();
+	} catch (error) {
+		return rejectWithValue(error.message);
+	}
+});
 
-export const allStudentsByCourse = createAsyncThunk("allStudentsByCourse", async (data) => {
-	const response = await fetch(`http://localhost:4000/api/v1/courses/${data.courseId}/students/all`, {
-		method: "GET",
-		credentials: "include"
-	})
+export const allStudentsByBatch = createAsyncThunk("allStudentsByBatch", async (data, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/batches/${data.batchId}/students/all`, {
+			method: "GET",
+			credentials: "include",
+		});
 
-	return await response.json()
-})
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData);
+		}
 
+		return await response.json();
+	} catch (error) {
+		return rejectWithValue(error.message);
+	}
+});
 
+export const allStudentsByCourse = createAsyncThunk("allStudentsByCourse", async (data, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/courses/${data.courseId}/students/all`, {
+			method: "GET",
+			credentials: "include",
+		});
 
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData);
+		}
 
-
-
-
+		return await response.json();
+	} catch (error) {
+		return rejectWithValue(error.message);
+	}
+});
 
 const initialState = {
+	studentsNoBatch: [], // Students who are not allocated to batch
+	studentsByBatch: [], // Students allocated to a specific batch
+	student: undefined, // Information of a single student
+	allStudents: [], // List of all students for admin
+	isLoading: false, // Loading state
+	isError: false, // Error state
+	errorMessage: "", // Error message
+};
 
-	students_no_batch: [], // students who are not allocated to batch
-	students_batch_alloted: [], // we are specifying this , but this  is of no use 
-	studentsByBatch: [],
-	student: undefined,
-	allStudents: undefined  // to show all students to admin , we will apply filter there too
-}
-export const studentSlice = createSlice(
-	{
-		name: "student",
-		initialState,
-		extraReducers: (builder) => {
-
-			builder.addCase(notAllocatedBatch.fulfilled, (state, action) => {
-				state.students_no_batch = [...action.payload.data]
+export const studentSlice = createSlice({
+	name: "student",
+	initialState,
+	extraReducers: (builder) => {
+		builder
+			.addCase(notAllocatedBatch.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
 			})
-			builder.addCase(getstudentsByBatch.fulfilled, (state, action) => {
-				console.log(action.payload)
-				state.studentsByBatch = [...action.payload.data]
+			.addCase(notAllocatedBatch.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.studentsNoBatch = [...action.payload.data];
+				toast.success("Fetched students without batch allocation");
 			})
-			builder.addCase(markAttendance.fulfilled, (state, action) => {
-				console.log(action.payload)
-				const index = state.studentsByBatch.findIndex((element) => {
-					return element._id == action.payload.data._id;
-				})
-				state.studentsByBatch.splice(index, 1)
-			})
-
-			builder.addCase(addToBatch.fulfilled, (state, action) => {
-				//pushing the student where batch allocated students are maintained
-				console.log(action.payload)
-				state.students_batch_alloted.push(action.payload.data);
-
-				const index = state.students_no_batch.findIndex((element) => {
-					return element._id == action.payload.data._id;
-				})
-				state.students_no_batch.splice(index, 1)
-			})
-			builder.addCase(studentInfo.fulfilled, (state, action) => {
-				console.log(action.payload)
-				state.student = action.payload.data; // here student  data is assigned and that conatins course 
-				// batch information also
+			.addCase(notAllocatedBatch.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error fetching students without batch: ${action.payload}`);
 			})
 
-			builder.addCase(allStudents.fulfilled, (state, action) => {
-				state.allStudents = [...action.payload.data]
+			.addCase(getstudentsByBatch.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
+			})
+			.addCase(getstudentsByBatch.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.studentsByBatch = [...action.payload.data];
+				toast.success("Fetched students by batch");
+			})
+			.addCase(getstudentsByBatch.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error fetching students by batch: ${action.payload}`);
 			})
 
-			builder.addCase(allStudentsByBatch.fulfilled, (state, action) => {
-				console.log("by batch", action.payload)
-				state.allStudents = [...action.payload.data]
+			.addCase(markAttendance.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
 			})
-			builder.addCase(allStudentsByCourse.fulfilled, (state, action) => {
-				console.log("by course", action.payload)
-
-				state.allStudents = [...action.payload.data]
+			.addCase(markAttendance.fulfilled, (state, action) => {
+				state.isLoading = false;
+				const index = state.studentsByBatch.findIndex((element) => element._id === action.payload.data._id);
+				if (index !== -1) {
+					state.studentsByBatch.splice(index, 1);
+				}
+				toast.success("Attendance marked successfully");
+			})
+			.addCase(markAttendance.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error marking attendance: ${action.payload}`);
 			})
 
-		}
-	}
-)
+			.addCase(addToBatch.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
+			})
+			.addCase(addToBatch.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.studentsByBatch.push(action.payload.data);
+				const index = state.studentsNoBatch.findIndex((element) => element._id === action.payload.data._id);
+				if (index !== -1) {
+					state.studentsNoBatch.splice(index, 1);
+				}
+				toast.success("Student added to batch successfully");
+			})
+			.addCase(addToBatch.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error adding student to batch: ${action.payload}`);
+			})
 
-export default studentSlice.reducer
+			.addCase(studentInfo.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
+			})
+			.addCase(studentInfo.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.student = action.payload.data;
+				toast.success("Fetched student info");
+			})
+			.addCase(studentInfo.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error fetching student info: ${action.payload}`);
+			})
+
+			.addCase(allStudents.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
+			})
+			.addCase(allStudents.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.allStudents = [...action.payload.data];
+				toast.success("Fetched all students");
+			})
+			.addCase(allStudents.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error fetching all students: ${action.payload}`);
+			})
+
+			.addCase(allStudentsByBatch.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
+			})
+			.addCase(allStudentsByBatch.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.allStudents = [...action.payload.data];
+				toast.success("Fetched students by batch");
+			})
+			.addCase(allStudentsByBatch.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error fetching students by batch: ${action.payload}`);
+			})
+
+			.addCase(allStudentsByCourse.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
+			})
+			.addCase(allStudentsByCourse.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.allStudents = [...action.payload.data];
+				toast.success("Fetched students by course");
+			})
+			.addCase(allStudentsByCourse.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(`Error fetching students by course: ${action.payload}`);
+			});
+	},
+});
+
+export default studentSlice.reducer;

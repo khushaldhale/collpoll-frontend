@@ -20,6 +20,8 @@ const StudentsByBatch = () => {
     topicId: "",
     student_id: "",
     isPresent: undefined,
+    subject: "",
+    topic: "",
   });
 
   const path = location.pathname.split("/");
@@ -41,16 +43,35 @@ const StudentsByBatch = () => {
 
   function changeHandler(event) {
     const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+
+    if (name === "subjectId" || name === "topicId") {
+      const selectedOption = event.target.option[event.target.selectedIndex];
+      if (name === "subjectId") {
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: value,
+          subject: selectedOption.getAttribute("data-sub"),
+        }));
+      } else {
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: value,
+          topic: selectedOption.getAttribute("data-topic"),
+        }));
+      }
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   }
 
   function submitHandler(event, student_id, presence) {
     event.preventDefault();
     formData.student_id = student_id;
     formData.isPresent = presence;
+    console.log(formData);
     if (requiredPath === "attendance") {
       dispatch(markAttendance(formData)).then((data) => {
         if (data.payload.success) {
@@ -98,7 +119,11 @@ const StudentsByBatch = () => {
                 <option value="">Select Subject</option>
                 {singleBatch &&
                   singleBatch.course.sub.map((sub) => (
-                    <option key={sub._id} value={sub._id}>
+                    <option
+                      key={sub._id}
+                      value={sub._id}
+                      data-sub={sub.sub_name}
+                    >
                       {sub.sub_name}
                     </option>
                   ))}
@@ -115,7 +140,11 @@ const StudentsByBatch = () => {
                   singleBatch.course.sub
                     .find((sub) => sub._id === formData.subjectId)
                     ?.topics.map((topic) => (
-                      <option key={topic._id} value={topic._id}>
+                      <option
+                        key={topic._id}
+                        value={topic._id}
+                        data-topic={topic.topic_name}
+                      >
                         {topic.topic_name}
                       </option>
                     ))}

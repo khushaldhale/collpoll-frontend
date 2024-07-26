@@ -1,97 +1,165 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
+// Use environment variable for the API base URL
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+// Define thunks with error handling
+export const notSubmittedFeedback = createAsyncThunk("notSubmittedFeedback", async (_, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/feedbacks/not-submitted`, {
+			method: "GET",
+			credentials: "include"
+		});
 
-export const notSubmittedFeedback = createAsyncThunk("notSubmittedFeedback", async () => {
-	const response = await fetch("http://localhost:4000/api/v1/feedbacks/not-submitted", {
-		method: "GET",
-		credentials: "include"
-	})
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData);
+		}
 
-	return await response.json()
-})
+		return await response.json();
+	} catch (error) {
+		return rejectWithValue(error.message);
+	}
+});
 
+export const submitFeedback = createAsyncThunk("submitFeedback", async (data, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/feedbacks/${data.feedbackId}/submit`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(data),
+			credentials: "include"
+		});
 
-export const submitFeedback = createAsyncThunk("submitFeedback", async (data) => {
-	const response = await fetch(`http://localhost:4000/api/v1/feedbacks/${data.feedbackId}/submit`, {
-		method: "PUT",
-		headers: {
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify(data),
-		credentials: "include"
-	})
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData);
+		}
 
-	return await response.json()
+		return await response.json();
+	} catch (error) {
+		return rejectWithValue(error.message);
+	}
+});
 
-})
+export const feedbacksViaBatch = createAsyncThunk("feedbacksViaBatch", async (data, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/${data.instructorId}/batches/${data.batchId}/feedbacks`, {
+			method: "GET",
+			credentials: "include"
+		});
 
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData);
+		}
 
+		return await response.json();
+	} catch (error) {
+		return rejectWithValue(error.message);
+	}
+});
 
-export const feedbacksViaBatch = createAsyncThunk("feedbacksViaBatch", async (data) => {
-	const response = await fetch(`http://localhost:4000/api/v1/${data.instructorId}/batches/${data.batchId}/feedbacks`, {
-		method: "GET",
-		credentials: "include"
-	})
+export const instructorPerformanceViaBatch = createAsyncThunk("instructorPerformanceViaBatch", async (data, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/instructors/${data.instructorId}/batches/${data.batchId}/performance`, {
+			method: "GET",
+			credentials: "include"
+		});
 
-	return await response.json()
-})
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData);
+		}
 
-
-
-export const instructorPerformanceViaBatch = createAsyncThunk("instructorPerformanceViaBatch", async (data) => {
-	const response = await fetch(`http://localhost:4000/api/v1/instructors/${data.instructorId}/batches/${data.batchId}/performance`, {
-		method: "GET",
-		credentials: "include"
-	})
-
-	return await response.json()
-})
-
-
-
-
+		return await response.json();
+	} catch (error) {
+		return rejectWithValue(error.message);
+	}
+});
 
 const initialState = {
 	feedback_not_submitted: [],
 	feedbackByBatch: [],
-	performance: undefined
-}
+	performance: undefined,
+	isLoading: false,
+	isError: false,
+	errorMessage: ''
+};
 
-export const feedbackSlice = createSlice(
-	{
-		name: "feedback",
-		initialState,
-		extraReducers: (builder) => {
-			builder.addCase(notSubmittedFeedback.fulfilled, (state, action) => {
-				console.log(action.payload)
-				state.feedback_not_submitted = [...action.payload.data]
+export const feedbackSlice = createSlice({
+	name: "feedback",
+	initialState,
+	extraReducers: (builder) => {
+		builder
+			.addCase(notSubmittedFeedback.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = '';
 			})
-
-			builder.addCase(submitFeedback.fulfilled, (state, action) => {
-				console.log("feedback is submitted succesfully", action.payload)
-
-
-				const index = state.feedback_not_submitted.findIndex((element) => {
-					return element._id === action.payload.data._id
-				})
-
-				state.feedback_not_submitted.splice(index, 1)
-
+			.addCase(notSubmittedFeedback.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.feedback_not_submitted = [...action.payload.data];
 			})
-			builder.addCase(feedbacksViaBatch.fulfilled, (state, action) => {
-				console.log("feedback of batch ", action.payload)
-				state.feedbackByBatch = [...action.payload.data]
+			.addCase(notSubmittedFeedback.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(action.payload); // Display error toast notification
 			})
-
-			builder.addCase(instructorPerformanceViaBatch.fulfilled, (state, action) => {
-				console.log("performance is ", action.payload)
+			.addCase(submitFeedback.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = '';
+			})
+			.addCase(submitFeedback.fulfilled, (state, action) => {
+				state.isLoading = false;
+				const index = state.feedback_not_submitted.findIndex((element) => element._id === action.payload.data._id);
+				if (index !== -1) {
+					state.feedback_not_submitted.splice(index, 1);
+				}
+				toast.success("Feedback submitted successfully"); // Display success toast notification
+			})
+			.addCase(submitFeedback.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(action.payload); // Display error toast notification
+			})
+			.addCase(feedbacksViaBatch.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = '';
+			})
+			.addCase(feedbacksViaBatch.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.feedbackByBatch = [...action.payload.data];
+			})
+			.addCase(feedbacksViaBatch.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(action.payload); // Display error toast notification
+			})
+			.addCase(instructorPerformanceViaBatch.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = '';
+			})
+			.addCase(instructorPerformanceViaBatch.fulfilled, (state, action) => {
+				state.isLoading = false;
 				state.performance = action.payload.data[0]?.averageRating;
-
 			})
-		}
+			.addCase(instructorPerformanceViaBatch.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
+				toast.error(action.payload); // Display error toast notification
+			});
 	}
-)
+});
 
-
-export default feedbackSlice.reducer
+export default feedbackSlice.reducer;

@@ -16,7 +16,7 @@ const Courses = () => {
   useEffect(() => {
     dispatch(CoursesByCategory({ categoryId })).then((data) => {
       if (data.payload.success) {
-        console.log("All courses are fetched successfully");
+        console.log("All courses are fetched successfully", data.payload.data);
       }
     });
   }, [dispatch, categoryId]);

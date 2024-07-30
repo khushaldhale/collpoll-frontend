@@ -6,32 +6,22 @@ import {
   getPendingStudents,
 } from "../../redux/slices/pendingStudentsSlice";
 import { getAllCourses } from "../../redux/slices/courseSlice";
-import {
-  createInstallment,
-  installment_student,
-  payInstallment,
-} from "../../redux/slices/installment";
+import { payInstallment } from "../../redux/slices/installment";
 import { createCourseEnrollment } from "../../redux/slices/courseEnrollment";
 
 const PendingCounselling = () => {
-  const [formData, setFormData] = useState({
-    course_enrolled: "",
-    student: "",
-    course: "",
-    isLumpsum: true,
-    totalAmountPaid: "",
-    installments: [],
-  });
-
-  const [courseData, setCourseData] = useState(undefined);
+  const [formData, setFormData] = useState({});
 
   const dispatch = useDispatch();
+
+  // pending students
   const pendingStudents = useSelector(
     (state) => state.pendingStudents.pendingStudents
   );
+  // all courses
   const allCourses = useSelector((state) => state.course.allCourses);
-  const installments = useSelector((state) => state.installment.installments);
 
+  // loading all initial data
   useEffect(() => {
     dispatch(getPendingStudents()).then((data) => {
       if (data.payload.success) {
@@ -46,52 +36,69 @@ const PendingCounselling = () => {
     });
   }, [dispatch]);
 
-  function changeHandler(event, student) {
-    const { name, type, value } = event.target;
-
-    if (name === "isInstallment" && event.target.checked) {
-      dispatch(installment_student({ student, course: courseData._id })).then(
-        (data) => {
-          if (data.payload.success) {
-            console.log("Installments are fetched successfully");
-          }
-        }
-      );
-    }
-
-    if (name === "isLumpsum" && !event.target.checked) {
-      dispatch(createInstallment({ student, courseId: courseData._id })).then(
-        (data) => {
-          if (data.payload.success) {
-            const installmentId = data.payload.data.map(
-              (element) => element._id
-            );
-            setFormData((prevData) => ({
-              ...prevData,
-              installments: installmentId,
-            }));
-            console.log("Installment is created successfully");
-          }
-        }
-      );
-    }
+  function changeHandler(event, student_id) {
+    const { name, value, type } = event.target;
 
     if (name === "course_enrolled") {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-        course: value,
+      const selectedIndex = event.target.selectedIndex;
+      const selectedOption = event.target.options[selectedIndex];
+      const courseData = JSON.parse(selectedOption.getAttribute("data-course"));
+      const installmentsWithIsPaid = courseData.installments.map((inst) => ({
+        ...inst,
+        isPaid: false,
       }));
-      const selectedOption = event.target.selectedOptions[0];
-      const courseObject = JSON.parse(selectedOption.dataset.course);
-      setCourseData(courseObject);
+
+      setFormData((prevData) => {
+        return {
+          ...prevData,
+          [student_id]: {
+            ...prevData[student_id],
+            [name]: type === "checkbox" ? event.target.checked : value,
+            installments: installmentsWithIsPaid,
+            isLumpsum: true,
+          },
+        };
+      });
     } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: type === "checkbox" ? event.target.checked : value,
-      }));
+      setFormData((prevData) => {
+        return {
+          ...prevData,
+          [student_id]: {
+            ...prevData[student_id],
+            [name]: type === "checkbox" ? event.target.checked : value,
+          },
+        };
+      });
     }
   }
+
+  const handlePayInstallment = (studentId, installmentIndex) => {
+    setFormData((prevData) => {
+      const updatedInstallments = prevData[studentId].installments.map(
+        (installment, index) => {
+          if (index === installmentIndex) {
+            return {
+              ...installment,
+              isPaid: true,
+              paid_date: new Date(Date.now()),
+            };
+          }
+          return installment;
+        }
+      );
+
+      return {
+        ...prevData,
+        [studentId]: {
+          ...prevData[studentId],
+          installments: updatedInstallments,
+        },
+      };
+    });
+
+    // Optionally, dispatch an action to update the backend
+    // dispatch(payInstallment({ studentId, installmentIndex }));
+  };
 
   return (
     <div className="p-6 max-w-6xl mx-auto w-full">
@@ -135,40 +142,8 @@ const PendingCounselling = () => {
                   ))}
                 </select>
 
-                {courseData && (
-                  <div className="p-4 border rounded-lg bg-gray-50">
-                    <h3 className="text-lg font-medium mb-2">Course Details</h3>
-                    <p>
-                      <strong>Course Name:</strong> {courseData.course_name}
-                    </p>
-                    <p>
-                      <strong>Description:</strong> {courseData.course_desc}
-                    </p>
-                    <p>
-                      <strong>Lumpsum Fees:</strong> {courseData.lumpsum_price}
-                    </p>
-                    <p>
-                      <strong>Installment Fees:</strong>{" "}
-                      {courseData.installment_price}
-                    </p>
-                    <p>
-                      <strong>Number of Installments:</strong>{" "}
-                      {courseData.number_of_installment}
-                    </p>
-                    {courseData.installments.map((installment, index) => (
-                      <div key={index} className="mt-2">
-                        <p>
-                          <strong>Installment No:</strong> {index + 1}
-                        </p>
-                        <p>
-                          <strong>Amount:</strong> {installment.amount}
-                        </p>
-                        <p>
-                          <strong>Due Day:</strong> {installment.due_day}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+                {formData[element._id]?.installments?.length === 0 && (
+                  <p>Installment option is not available. </p>
                 )}
 
                 <div className="flex flex-col gap-4">
@@ -177,74 +152,52 @@ const PendingCounselling = () => {
                       type="checkbox"
                       id="isLumpsum"
                       name="isLumpsum"
-                      checked={formData.isLumpsum}
+                      checked={formData[element._id]?.isLumpsum}
                       onChange={(event) => changeHandler(event, element._id)}
                       className="mr-2"
                     />
                     Lumpsum Payment
                   </label>
-
-                  <label htmlFor="isInstallment" className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="isInstallment"
-                      name="isInstallment"
-                      onChange={(event) => changeHandler(event, element._id)}
-                      className="mr-2"
-                    />
-                    Installment Payment
-                  </label>
                 </div>
 
-                {installments.length > 0 && (
-                  <div className="flex flex-wrap gap-4">
-                    {installments.map((installment) => (
-                      <div
-                        key={installment._id}
-                        className="bg-gray-50 border rounded-lg p-4 flex-1 max-w-xs"
-                      >
-                        <input
-                          type="number"
-                          name="amount"
-                          id="amount"
-                          value={installment.amount}
-                          className="w-full p-2 border rounded-lg"
-                          readOnly
-                        />
-                        <input
-                          type="text"
-                          name="due_date"
-                          id="due_date"
-                          value={installment.due_date}
-                          className="w-full p-2 border rounded-lg mt-2"
-                          readOnly
-                        />
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            dispatch(
-                              payInstallment({ installmentId: installment._id })
-                            ).then((data) => {
-                              if (data.payload.success) {
-                                console.log("Installment is paid successfully");
-                              }
-                            });
-                          }}
-                          className="w-full p-2 border rounded-lg bg-green-500 text-white hover:bg-green-600 mt-2"
-                        >
-                          Pay Installment
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                {formData[element._id]?.isLumpsum === false &&
+                  formData[element._id]?.installments?.map(
+                    (installment, index) => {
+                      return (
+                        <div key={index}>
+                          <input
+                            type="number"
+                            name="amount"
+                            value={installment.amount}
+                            readOnly
+                          />
+                          <input
+                            type="number"
+                            name="due_day"
+                            value={installment.due_day}
+                            readOnly
+                          />
+                          <p
+                            onClick={() =>
+                              handlePayInstallment(element._id, index)
+                            }
+                            className="cursor-pointer text-blue-500"
+                          >
+                            Pay Installment
+                          </p>
+                        </div>
+                      );
+                    }
+                  )}
 
                 <input
                   type="number"
                   id="totalAmountPaid"
                   name="totalAmountPaid"
                   placeholder="Enter Total Amount"
-                  onChange={changeHandler}
+                  onChange={(event) => {
+                    changeHandler(event, element._id);
+                  }}
                   className="w-full p-2 border rounded-lg"
                 />
               </form>
@@ -252,17 +205,14 @@ const PendingCounselling = () => {
               <div className="flex space-x-4 mt-4">
                 <button
                   onClick={() => {
-                    formData.userId = element._id;
-                    formData.student = element._id;
-                    dispatch(admitStudent(formData)).then((data) => {
+                    console.log(formData);
+                    formData[element._id].student = element._id;
+                    console.log(formData[element._id]);
+                    dispatch(
+                      createCourseEnrollment(formData[element._id])
+                    ).then((data) => {
                       if (data.payload.success) {
-                        console.log("Admission given");
-                      }
-                    });
-
-                    dispatch(createCourseEnrollment(formData)).then((data) => {
-                      if (data.payload.success) {
-                        console.log("Course is enrolled successfully");
+                        console.log("enrolled in the course");
                       }
                     });
                   }}
@@ -271,15 +221,7 @@ const PendingCounselling = () => {
                   Give Admission
                 </button>
                 <button
-                  onClick={() => {
-                    dispatch(denyAdmission({ studentId: element._id })).then(
-                      (data) => {
-                        if (data.payload.success) {
-                          console.log("Admission denied and data deleted");
-                        }
-                      }
-                    );
-                  }}
+                  onClick={() => {}}
                   className="border rounded-lg py-2 px-4 w-full text-center bg-red-500 text-white hover:bg-red-600"
                 >
                   Deny Admission

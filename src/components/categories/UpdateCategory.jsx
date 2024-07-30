@@ -13,35 +13,75 @@ const UpdateCategory = () => {
     category_desc: "",
   });
 
+  const [errors, setErrors] = useState({
+    category_name: "",
+    category_desc: "",
+  });
+
   const params = useParams();
   const id = params.categoryId;
 
   useEffect(() => {
     dispatch(getSingleCategory(id)).then((data) => {
-      setFormData({
-        category_name: data.payload.data.category_name,
-        category_desc: data.payload.data.category_desc,
-      });
+      if (data.payload.success) {
+        setFormData({
+          category_name: data.payload.data.category_name,
+          category_desc: data.payload.data.category_desc,
+        });
+      }
     });
   }, [dispatch, id]);
 
   const navigate = useNavigate();
 
+  function validateField(name, value) {
+    let error = "";
+    if (value.trim() === "") {
+      error = `${name.replace("_", " ")} is required`;
+    }
+    return error;
+  }
+
   function changeHandler(event) {
+    const { name, value } = event.target;
     setFormData((prevData) => ({
       ...prevData,
-      [event.target.name]: event.target.value,
+      [name]: value,
+    }));
+
+    // Validate field on change
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: validateField(name, value),
+    }));
+  }
+
+  function handleBlur(event) {
+    const { name, value } = event.target;
+    // Validate field on blur
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: validateField(name, value),
     }));
   }
 
   function submitHandler(event) {
     event.preventDefault();
+    // Validate all fields before submission
+    const newErrors = {
+      category_name: validateField("category_name", formData.category_name),
+      category_desc: validateField("category_desc", formData.category_desc),
+    };
+    setErrors(newErrors);
 
-    dispatch(updateCategory({ ...formData, id })).then((data) => {
-      if (data.payload.success) {
-        navigate("/dashboard/admin/categories");
-      }
-    });
+    // Check if there are no errors before dispatching
+    if (!newErrors.category_name && !newErrors.category_desc) {
+      dispatch(updateCategory({ ...formData, id })).then((data) => {
+        if (data.payload.success) {
+          navigate("/dashboard/admin/categories");
+        }
+      });
+    }
   }
 
   return (
@@ -62,9 +102,13 @@ const UpdateCategory = () => {
             name="category_name"
             placeholder="Category Name"
             onChange={changeHandler}
+            onBlur={handleBlur}
             value={formData.category_name}
             className="border border-gray-300 rounded-lg p-2"
           />
+          {errors.category_name && (
+            <p className="text-red-500 text-sm mt-1">{errors.category_name}</p>
+          )}
         </div>
         <div className="flex flex-col">
           <label htmlFor="category_desc" className="text-sm font-medium mb-1">
@@ -76,9 +120,13 @@ const UpdateCategory = () => {
             name="category_desc"
             placeholder="Category Description"
             onChange={changeHandler}
+            onBlur={handleBlur}
             value={formData.category_desc}
             className="border border-gray-300 rounded-lg p-2"
           />
+          {errors.category_desc && (
+            <p className="text-red-500 text-sm mt-1">{errors.category_desc}</p>
+          )}
         </div>
         <button
           type="submit"

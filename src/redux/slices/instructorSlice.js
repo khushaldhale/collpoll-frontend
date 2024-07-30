@@ -26,6 +26,27 @@ export const getAllInstructor = createAsyncThunk(
 	}
 );
 
+export const deleteInstructor = createAsyncThunk(async (data, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/users/${data.userId}`, {
+			method: "DELETE",
+			credentials: "include"
+		})
+
+
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData)
+		}
+
+
+		return await response.json()
+	}
+	catch (error) {
+		rejectWithValue(error.message)
+	}
+})
+
 const initialState = {
 	instructors: [],
 	isLoading: false,
@@ -51,9 +72,34 @@ export const instructorSlice = createSlice({
 			.addCase(getAllInstructor.rejected, (state, action) => {
 				state.isLoading = false;
 				state.isError = true;
-				state.errorMessage = action.payload;
-				toast.error(action.payload);
+				state.errorMessage = action.payload.message;
+				toast.error(action.payload.message);
 			});
+
+
+		builder
+			.addCase(deleteInstructor.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
+			})
+			.addCase(deleteInstructor.fulfilled, (state, action) => {
+				state.isLoading = false;
+				const index = state.instructors.findIndex((element) => {
+					return element._id == action.payload.data._id;
+				})
+				//  instructor is removed succefuly
+				state.instructors.splice(index, 1)
+				toast.success("Instructors are deleted succefully");
+			})
+			.addCase(deleteInstructor.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload.message;
+				toast.error(action.payload.message);
+			});
+
+
 	},
 });
 

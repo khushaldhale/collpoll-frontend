@@ -19,7 +19,41 @@ const AddCourse = () => {
     iterate: [],
   });
 
-  // capturing all required data
+  const [errors, setErrors] = useState({
+    course_name: "",
+    course_desc: "",
+    lumpsum_price: "",
+    installment_price: "",
+    number_of_installment: "",
+    installments: [],
+  });
+
+  function validateField(name, value) {
+    let error = "";
+    switch (name) {
+      case "course_name":
+      case "course_desc":
+        if (value.trim() === "") {
+          error = `${name.replace("_", " ")} is required`;
+        }
+        break;
+      case "lumpsum_price":
+        if (formData.isInstallment && value.trim() === "") {
+          error = "Lumpsum price is required if not using installments";
+        }
+        break;
+      case "installment_price":
+      case "number_of_installment":
+        if (formData.isInstallment && value.trim() === "") {
+          error = `${name.replace("_", " ")} is required`;
+        }
+        break;
+      default:
+        break;
+    }
+    return error;
+  }
+
   function changeHandler(event) {
     const { name, type, value } = event.target;
     if (name === "number_of_installment") {
@@ -40,9 +74,23 @@ const AddCourse = () => {
         [name]: type === "checkbox" ? event.target.checked : value,
       }));
     }
+
+    // Validate field on change
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: validateField(name, value),
+    }));
   }
 
-  // capturing installment amount and due_day
+  function handleBlur(event) {
+    const { name, value } = event.target;
+    // Validate field on blur
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: validateField(name, value),
+    }));
+  }
+
   function installmentHandler(event, index) {
     const { name, value } = event.target;
     const updatedInstallments = formData.installments.map((installment, idx) =>
@@ -54,14 +102,51 @@ const AddCourse = () => {
     }));
   }
 
-  // submitting course
   function submitHandler(event) {
     event.preventDefault();
-    dispatch(createCourse({ ...formData, categoryId })).then((data) => {
-      if (data.payload.success) {
-        navigate(-1);
-      }
-    });
+
+    const newErrors = {
+      course_name: validateField("course_name", formData.course_name),
+      course_desc: validateField("course_desc", formData.course_desc),
+      lumpsum_price: validateField("lumpsum_price", formData.lumpsum_price),
+      installment_price: validateField(
+        "installment_price",
+        formData.installment_price
+      ),
+      number_of_installment: validateField(
+        "number_of_installment",
+        formData.number_of_installment
+      ),
+    };
+
+    // we are validating our basic form , does  it contain errors or not
+    const isFormError = !Object.values(newErrors).some((error) => error);
+    // we have validated installments also, later in the code
+
+    // Validate installments if needed
+    if (formData.isInstallment) {
+      const installmentErrors = formData.installments.map((installment) => ({
+        amount: validateField("installment_price", installment.amount),
+        due_day: validateField("due_day", installment.due_day),
+      }));
+      newErrors.installments = installmentErrors;
+    }
+
+    setErrors(newErrors); // this is having all keys for installmnets
+
+    // Check if there are no errors before dispatching
+    if (
+      isFormError &&
+      (!formData.isInstallment ||
+        !newErrors.installments.some((e) => e.amount || e.due_day))
+    ) {
+      console.log("API calling ");
+      dispatch(createCourse({ ...formData, categoryId })).then((data) => {
+        if (data.payload.success) {
+          navigate(-1);
+        }
+      });
+    }
   }
 
   return (
@@ -83,10 +168,15 @@ const AddCourse = () => {
             name="course_name"
             placeholder="Enter course name"
             onChange={changeHandler}
+            onBlur={handleBlur}
             value={formData.course_name}
             className="border border-gray-300 rounded-lg p-2"
           />
+          {errors.course_name && (
+            <p className="text-red-500 text-sm mt-1">{errors.course_name}</p>
+          )}
         </div>
+
         <div className="flex flex-col">
           <label htmlFor="course_desc" className="text-sm font-medium mb-1">
             Course Description
@@ -96,10 +186,15 @@ const AddCourse = () => {
             name="course_desc"
             placeholder="Enter course description"
             onChange={changeHandler}
+            onBlur={handleBlur}
             value={formData.course_desc}
             className="border border-gray-300 rounded-lg p-2"
           />
+          {errors.course_desc && (
+            <p className="text-red-500 text-sm mt-1">{errors.course_desc}</p>
+          )}
         </div>
+
         <div className="flex flex-col">
           <label htmlFor="lumpsum_price" className="text-sm font-medium mb-1">
             Lumpsum Course Price
@@ -110,9 +205,13 @@ const AddCourse = () => {
             name="lumpsum_price"
             placeholder="Enter one-time course price"
             onChange={changeHandler}
+            onBlur={handleBlur}
             value={formData.lumpsum_price}
             className="border border-gray-300 rounded-lg p-2"
           />
+          {errors.lumpsum_price && (
+            <p className="text-red-500 text-sm mt-1">{errors.lumpsum_price}</p>
+          )}
         </div>
 
         <div className="flex items-center space-x-2">
@@ -144,9 +243,15 @@ const AddCourse = () => {
                 name="installment_price"
                 placeholder="Enter installment course price"
                 onChange={changeHandler}
+                onBlur={handleBlur}
                 value={formData.installment_price}
                 className="border border-gray-300 rounded-lg p-2"
               />
+              {errors.installment_price && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.installment_price}
+                </p>
+              )}
             </div>
             <div className="flex flex-col">
               <label
@@ -161,11 +266,17 @@ const AddCourse = () => {
                 name="number_of_installment"
                 placeholder="Enter number of installments"
                 onChange={changeHandler}
+                onBlur={handleBlur}
                 value={formData.number_of_installment}
                 className="border border-gray-300 rounded-lg p-2"
               />
+              {errors.number_of_installment && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.number_of_installment}
+                </p>
+              )}
             </div>
-            {formData.iterate.map((element, index) => (
+            {formData.iterate.map((_, index) => (
               <div key={index} className="flex flex-col space-y-2">
                 <div className="flex space-x-4">
                   <div className="flex flex-col w-1/2">
@@ -181,9 +292,15 @@ const AddCourse = () => {
                       id={`amount_${index}`}
                       placeholder="Enter amount"
                       onChange={(event) => installmentHandler(event, index)}
+                      onBlur={(event) => handleBlur(event)}
                       value={formData.installments[index]?.amount || ""}
                       className="border border-gray-300 rounded-lg p-2"
                     />
+                    {errors.installments[index]?.amount && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.installments[index].amount}
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-col w-1/2">
                     <label
@@ -198,9 +315,15 @@ const AddCourse = () => {
                       id={`due_day_${index}`}
                       placeholder="Enter due day"
                       onChange={(event) => installmentHandler(event, index)}
+                      onBlur={(event) => handleBlur(event)}
                       value={formData.installments[index]?.due_day || ""}
                       className="border border-gray-300 rounded-lg p-2"
                     />
+                    {errors.installments[index]?.due_day && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.installments[index].due_day}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

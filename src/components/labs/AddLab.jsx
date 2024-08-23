@@ -9,23 +9,61 @@ const AddLab = () => {
     lab_no: "",
   });
 
+  const [errors, setErrors] = useState({
+    lab_no: "",
+  });
+
   const navigate = useNavigate();
 
-  function changeHandler(event) {
+  const changeHandler = (event) => {
     setFormData((prevData) => ({
       ...prevData,
       [event.target.name]: event.target.value,
     }));
-  }
+  };
 
-  function submitHandler(event) {
+  const handleBlur = (event) => {
+    const { name, value } = event.target;
+    validateField(name, value);
+  };
+
+  const validateField = (name, value) => {
+    let error = "";
+    if (name === "lab_no") {
+      if (!value) {
+        error = "Lab number is required";
+      } else if (value <= 0) {
+        error = "Lab number must be greater than zero";
+      }
+    }
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: error,
+    }));
+  };
+
+  const submitHandler = (event) => {
     event.preventDefault();
-    dispatch(createLab(formData)).then((data) => {
-      if (data.payload.success) {
-        navigate("/dashboard/admin/labs");
+    let valid = true;
+    const newErrors = {};
+    Object.keys(formData).forEach((key) => {
+      if (!formData[key]) {
+        newErrors[key] = `${key} is required`;
+        valid = false;
+      } else {
+        validateField(key, formData[key]);
+        if (errors[key]) valid = false;
       }
     });
-  }
+    setErrors(newErrors);
+    if (valid) {
+      dispatch(createLab(formData)).then((data) => {
+        if (data.payload.success) {
+          navigate("/dashboard/admin/labs");
+        }
+      });
+    }
+  };
 
   return (
     <div className="p-4 max-w-md mx-auto">
@@ -45,9 +83,13 @@ const AddLab = () => {
               name="lab_no"
               placeholder="Enter lab number"
               onChange={changeHandler}
+              onBlur={handleBlur}
               value={formData.lab_no}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
+            {errors.lab_no && (
+              <span className="text-red-500 text-sm">{errors.lab_no}</span>
+            )}
           </div>
           <div className="flex justify-center">
             <button

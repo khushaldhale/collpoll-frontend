@@ -139,6 +139,7 @@ export const authSlice = createSlice({
 			.addCase(sendOTP.fulfilled, (state, action) => {
 				state.isLoading = false;
 				state.email = action.payload.data.email;
+				console.log(action.payload.data.otp)
 				toast.success(action.payload.message);
 			})
 			.addCase(registerUser.pending, (state) => {

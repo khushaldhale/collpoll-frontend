@@ -81,6 +81,37 @@ export const instructorPerformanceViaBatch = createAsyncThunk("instructorPerform
 	}
 });
 
+
+
+// instructor should also be mentioned here
+export const deleteFeedbacksViaBatch = createAsyncThunk("deleteFeedbacksViaBatch", async (data, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/batches/${data.batchId}/feedbacks/delete/instructorId=${data.instructorId}`, {
+			method: "DELETE",
+			credentials: "include"
+		})
+
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData)
+		}
+
+		return await response.json()
+
+	}
+	catch (error) {
+		rejectWithValue(error.message)
+	}
+
+})
+
+
+// have to create a thunk where feedbacks via taken instructor , batch and sub
+
+
+
+
+
 const initialState = {
 	feedback_not_submitted: [],
 	feedbackByBatch: [],
@@ -158,7 +189,22 @@ export const feedbackSlice = createSlice({
 				state.isError = true;
 				state.errorMessage = action.payload;
 				toast.error(action.payload); // Display error toast notification
-			});
+			})
+			.addCase(deleteFeedbacksViaBatch.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = '';
+			})
+			.addCase(deleteFeedbacksViaBatch.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.feedbackByBatch = [];
+			})
+			.addCase(deleteFeedbacksViaBatch.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload.message;
+				toast.error(action.payload.message); // Display error toast notification
+			})
 	}
 });
 

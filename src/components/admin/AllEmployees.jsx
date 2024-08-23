@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import accountType from "../../constants/application";
-import { getAllInstructor } from "../../redux/slices/instructorSlice";
-import { allCounsellors } from "../../redux/slices/counsellorSlice";
+import {
+  deleteInstructor,
+  getAllInstructor,
+} from "../../redux/slices/instructorSlice";
+import {
+  allCounsellors,
+  deleteCounsellor,
+} from "../../redux/slices/counsellorSlice";
 
 const AllEmployees = () => {
   const dispatch = useDispatch();
@@ -71,6 +77,21 @@ const AllEmployees = () => {
                 {element.fname + " " + element.lname}
               </h3>
               <p className="text-gray-600">{element.email}</p>
+
+              <button
+                onClick={() => {
+                  dispatch(deleteInstructor({ userId: element._id })).then(
+                    (data) => {
+                      if (data.payload.success) {
+                        console.log("instructor is deleted succeflly");
+                      }
+                    }
+                  );
+                }}
+              >
+                {" "}
+                Delete Instructor
+              </button>
               {/* Add additional instructor data here */}
             </div>
           ))}
@@ -86,6 +107,20 @@ const AllEmployees = () => {
                 {element.fname + " " + element.lname}
               </h3>
               <p className="text-gray-600">{element.email}</p>
+              <button
+                onClick={() => {
+                  dispatch(deleteCounsellor({ userId: element._id })).then(
+                    (data) => {
+                      if (data.payload.success) {
+                        console.log("counselor is deleted succeflly");
+                      }
+                    }
+                  );
+                }}
+              >
+                {" "}
+                Delete counsellor
+              </button>
               {/* Add additional counsellor data here */}
             </div>
           ))}

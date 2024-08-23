@@ -45,6 +45,32 @@ export const allCounsellors = createAsyncThunk("allCounsellors", async (_, { rej
 	}
 });
 
+
+
+export const deleteCounsellor = createAsyncThunk(async (data, { rejectWithValue }) => {
+	try {
+		const response = await fetch(`${BACKEND_URL}/users/${data.userId}`, {
+			method: "DELETE",
+			credentials: "include"
+		})
+
+
+		if (!response.ok) {
+			const errorData = await response.json();
+			return rejectWithValue(errorData)
+		}
+
+
+		return await response.json()
+	}
+	catch (error) {
+		rejectWithValue(error.message)
+	}
+})
+
+
+
+
 const initialState = {
 	performance: undefined,
 	allCounsellors: undefined,
@@ -89,6 +115,31 @@ export const counsellorSlice = createSlice({
 				state.errorMessage = action.payload;
 				toast.error(action.payload);
 			});
+
+
+		builder
+			.addCase(deleteCounsellor.pending, (state) => {
+				state.isLoading = true;
+				state.isError = false;
+				state.errorMessage = "";
+			})
+			.addCase(deleteCounsellor.fulfilled, (state, action) => {
+				state.isLoading = false;
+				const index = state.allCounsellors.findIndex((element) => {
+					return element._id == action.payload.data._id;
+				})
+				//  instructor is removed succefuly
+				state.allCounsellors.splice(index, 1)
+				toast.success("Counsellor are deleted succefully");
+			})
+			.addCase(deleteCounsellor.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload.message;
+				toast.error(action.payload.message);
+			});
+
+
 	}
 });
 

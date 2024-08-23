@@ -113,8 +113,11 @@ export const subByCourse = createAsyncThunk(
 	"subByCourse",
 	async (data, { rejectWithValue }) => {
 		try {
+			// this code will break somewhere 
+			// instead of sending whole course in courseId send  only id to correct 
 			const { courseId } = data;
-			const response = await fetch(`${BACKEND_URL}/subjects/${courseId._id}`, {
+
+			const response = await fetch(`${BACKEND_URL}/subjects/${courseId}`, {
 				method: "GET",
 				credentials: "include",
 			});

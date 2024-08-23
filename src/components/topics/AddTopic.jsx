@@ -11,27 +11,74 @@ const AddTopic = () => {
     duration: "",
   });
 
+  const [errors, setErrors] = useState({
+    topic_name: "",
+    topic_desc: "",
+    duration: "",
+  });
+
   const navigate = useNavigate();
   const { categoryId, courseId, subjectId } = useParams();
 
+  function validateField(name, value) {
+    let error = "";
+    if (value.trim() === "") {
+      error = `${name.replace("_", " ")} is required`;
+    } else if (name === "duration" && isNaN(value)) {
+      error = "Duration must be a number";
+    }
+    return error;
+  }
+
   function changeHandler(event) {
+    const { name, value } = event.target;
     setFormData((prevData) => ({
       ...prevData,
-      [event.target.name]: event.target.value,
+      [name]: value,
+    }));
+
+    // Validate field on change
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: validateField(name, value),
+    }));
+  }
+
+  function handleBlur(event) {
+    const { name, value } = event.target;
+    // Validate field on blur
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: validateField(name, value),
     }));
   }
 
   function submitHandler(event) {
     event.preventDefault();
-    formData.categoryId = categoryId;
-    formData.courseId = courseId;
-    formData.subjectId = subjectId;
+    // Validate all fields before submission
+    const newErrors = {
+      topic_name: validateField("topic_name", formData.topic_name),
+      topic_desc: validateField("topic_desc", formData.topic_desc),
+      duration: validateField("duration", formData.duration),
+    };
+    setErrors(newErrors);
 
-    dispatch(createTopic(formData)).then((data) => {
-      if (data.payload.success) {
-        navigate(-1);
-      }
-    });
+    // Check if there are no errors before dispatching
+    if (!newErrors.topic_name && !newErrors.topic_desc && !newErrors.duration) {
+      // Add categoryId, courseId, subjectId to formData
+      const data = {
+        ...formData,
+        categoryId,
+        courseId,
+        subjectId,
+      };
+
+      dispatch(createTopic(data)).then((data) => {
+        if (data.payload.success) {
+          navigate(-1);
+        }
+      });
+    }
   }
 
   return (
@@ -54,9 +101,13 @@ const AddTopic = () => {
             name="topic_name"
             placeholder="Enter topic name"
             onChange={changeHandler}
+            onBlur={handleBlur}
             value={formData.topic_name}
             className="w-full border rounded-lg p-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
           />
+          {errors.topic_name && (
+            <p className="text-red-500 text-sm mt-1">{errors.topic_name}</p>
+          )}
         </div>
         <div className="mb-4">
           <label
@@ -71,9 +122,13 @@ const AddTopic = () => {
             name="topic_desc"
             placeholder="Enter topic description"
             onChange={changeHandler}
+            onBlur={handleBlur}
             value={formData.topic_desc}
             className="w-full border rounded-lg p-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
           />
+          {errors.topic_desc && (
+            <p className="text-red-500 text-sm mt-1">{errors.topic_desc}</p>
+          )}
         </div>
         <div className="mb-4">
           <label
@@ -88,9 +143,13 @@ const AddTopic = () => {
             name="duration"
             placeholder="Enter duration"
             onChange={changeHandler}
+            onBlur={handleBlur}
             value={formData.duration}
             className="w-full border rounded-lg p-2 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
           />
+          {errors.duration && (
+            <p className="text-red-500 text-sm mt-1">{errors.duration}</p>
+          )}
         </div>
         <div className="flex justify-center">
           <button

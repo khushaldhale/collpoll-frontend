@@ -15,8 +15,9 @@ const AddBatch = () => {
     start_date: "",
     end_date: "",
   });
-  const { labId } = useParams();
 
+  const [errors, setErrors] = useState({});
+  const { labId } = useParams();
   const allCourses = useSelector((state) => state.course.allCourses);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -36,26 +37,110 @@ const AddBatch = () => {
     });
   }, [dispatch]);
 
-  function changeHandler(event) {
+  const changeHandler = (event) => {
     const { name, value } = event.target;
+    validateField(name, value);
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-  }
+  };
 
-  function submitHandler(event) {
+  const handleBlur = (event) => {
+    const { name, value } = event.target;
+    validateField(name, value);
+  };
+
+  const validateField = (name, value) => {
+    let error = "";
+
+    if (name === "batch_name") {
+      if (!value) {
+        error = "Batch name is required";
+      }
+    } else if (name === "start_time") {
+      if (!value) {
+        error = "Start time is required";
+      }
+    } else if (name === "end_time") {
+      if (!value) {
+        error = "End time is required";
+      } else if (
+        value &&
+        formData.start_time &&
+        new Date(`1970-01-01T${value}`) <=
+          new Date(`1970-01-01T${formData.start_time}`)
+      ) {
+        error = "End time should be greater than start time";
+      } else if (value && formData.start_time) {
+        const startTime = new Date(`1970-01-01T${formData.start_time}`);
+        const endTime = new Date(`1970-01-01T${value}`);
+        const difference = (endTime - startTime) / (1000 * 60);
+        if (difference < 30) {
+          error = "End time should be at least 30 minutes after start time";
+        }
+      }
+    } else if (name === "start_date") {
+      if (!value) {
+        error = "Start date is required";
+      } else if (
+        new Date(value).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0)
+      ) {
+        error = "Start date cannot be in the past";
+      }
+    } else if (name === "end_date") {
+      if (!value) {
+        error = "End date is required";
+      } else if (
+        value &&
+        formData.start_date &&
+        new Date(value).setHours(0, 0, 0, 0) <
+          new Date(formData.start_date).setHours(0, 0, 0, 0)
+      ) {
+        error = "End date cannot be before start date";
+      }
+    } else if (name === "course") {
+      if (!value) {
+        error = "Course selection is required";
+      }
+    } else if (name === "instructor") {
+      if (!value) {
+        error = "Instructor selection is required";
+      }
+    }
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: error,
+    }));
+  };
+
+  const submitHandler = (event) => {
     event.preventDefault();
     formData.labId = labId;
 
-    console.log(formData);
-    dispatch(createBatch(formData)).then((data) => {
-      if (data.payload.success) {
-        console.log("Batch created successfully");
-        navigate(`/dashboard/admin/labs/${labId}/batches`);
+    let valid = true;
+    const newErrors = {};
+    Object.keys(formData).forEach((key) => {
+      if (!formData[key]) {
+        newErrors[key] = `${key.replace("_", " ")} is required`;
+        valid = false;
+      } else {
+        validateField(key, formData[key]);
+        if (errors[key]) valid = false;
       }
     });
-  }
+    setErrors(newErrors);
+    if (valid) {
+      dispatch(createBatch(formData)).then((data) => {
+        if (data.payload.success) {
+          console.log("Batch created successfully");
+          navigate(`/dashboard/admin/labs/${labId}/batches`);
+        }
+      });
+    }
+  };
 
   return (
     <div className="p-4 max-w-lg mx-auto">
@@ -75,9 +160,13 @@ const AddBatch = () => {
             id="batch_name"
             placeholder="Enter Batch Name"
             onChange={changeHandler}
+            onBlur={handleBlur}
             value={formData.batch_name}
             className="w-full border border-gray-300 rounded-md p-2"
           />
+          {errors.batch_name && (
+            <span className="text-red-500 text-sm">{errors.batch_name}</span>
+          )}
         </div>
 
         <div className="form-group mb-4">
@@ -90,9 +179,13 @@ const AddBatch = () => {
             id="start_time"
             placeholder="Enter Start Time"
             onChange={changeHandler}
+            onBlur={handleBlur}
             value={formData.start_time}
             className="w-full border border-gray-300 rounded-md p-2"
           />
+          {errors.start_time && (
+            <span className="text-red-500 text-sm">{errors.start_time}</span>
+          )}
         </div>
 
         <div className="form-group mb-4">
@@ -105,9 +198,13 @@ const AddBatch = () => {
             id="end_time"
             placeholder="Enter End Time"
             onChange={changeHandler}
+            onBlur={handleBlur}
             value={formData.end_time}
             className="w-full border border-gray-300 rounded-md p-2"
           />
+          {errors.end_time && (
+            <span className="text-red-500 text-sm">{errors.end_time}</span>
+          )}
         </div>
 
         <div className="form-group mb-4">
@@ -120,9 +217,13 @@ const AddBatch = () => {
             id="start_date"
             placeholder="Enter Start Date"
             onChange={changeHandler}
+            onBlur={handleBlur}
             value={formData.start_date}
             className="w-full border border-gray-300 rounded-md p-2"
           />
+          {errors.start_date && (
+            <span className="text-red-500 text-sm">{errors.start_date}</span>
+          )}
         </div>
 
         <div className="form-group mb-4">
@@ -135,9 +236,13 @@ const AddBatch = () => {
             id="end_date"
             placeholder="Enter End Date"
             onChange={changeHandler}
+            onBlur={handleBlur}
             value={formData.end_date}
             className="w-full border border-gray-300 rounded-md p-2"
           />
+          {errors.end_date && (
+            <span className="text-red-500 text-sm">{errors.end_date}</span>
+          )}
         </div>
 
         <div className="form-group mb-4">
@@ -148,6 +253,7 @@ const AddBatch = () => {
             name="course"
             id="course"
             onChange={changeHandler}
+            onBlur={handleBlur}
             value={formData.course}
             className="w-full border border-gray-300 rounded-md p-2"
           >
@@ -158,6 +264,9 @@ const AddBatch = () => {
               </option>
             ))}
           </select>
+          {errors.course && (
+            <span className="text-red-500 text-sm">{errors.course}</span>
+          )}
         </div>
 
         <div className="form-group mb-4">
@@ -168,6 +277,7 @@ const AddBatch = () => {
             name="instructor"
             id="instructor"
             onChange={changeHandler}
+            onBlur={handleBlur}
             value={formData.instructor}
             className="w-full border border-gray-300 rounded-md p-2"
           >
@@ -178,13 +288,16 @@ const AddBatch = () => {
               </option>
             ))}
           </select>
+          {errors.instructor && (
+            <span className="text-red-500 text-sm">{errors.instructor}</span>
+          )}
         </div>
 
         <button
           type="submit"
-          className="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-4"
+          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
         >
-          Create Batch
+          Add Batch
         </button>
       </form>
     </div>

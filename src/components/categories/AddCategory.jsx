@@ -10,23 +10,49 @@ const AddCategory = () => {
     category_desc: "",
   });
 
+  const [errors, setErrors] = useState({
+    category_name: "",
+    category_desc: "",
+  });
+
   const navigate = useNavigate();
 
+  function validateField(name, value) {
+    let error = "";
+    if (value.trim() === "") {
+      error = `${name.replace("_", " ")} is required`;
+    }
+    return error;
+  }
+
   function changeHandler(event) {
+    const { name, value } = event.target;
     setFormData((prevData) => ({
       ...prevData,
-      [event.target.name]: event.target.value,
+      [name]: value,
+    }));
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: validateField(name, value),
     }));
   }
 
   function submitHandler(event) {
     event.preventDefault();
+    const newErrors = {
+      category_name: validateField("category_name", formData.category_name),
+      category_desc: validateField("category_desc", formData.category_desc),
+    };
+    setErrors(newErrors);
 
-    dispatch(createCategory(formData)).then((data) => {
-      if (data.payload.success) {
-        navigate("/dashboard/admin/categories");
-      }
-    });
+    if (!newErrors.category_name && !newErrors.category_desc) {
+      dispatch(createCategory(formData)).then((data) => {
+        if (data.payload.success) {
+          navigate("/dashboard/admin/categories");
+        }
+      });
+    }
   }
 
   return (
@@ -50,6 +76,9 @@ const AddCategory = () => {
             value={formData.category_name}
             className="border border-gray-300 rounded-lg p-2"
           />
+          {errors.category_name && (
+            <p className="text-red-500 text-sm mt-1">{errors.category_name}</p>
+          )}
         </div>
         <div className="flex flex-col">
           <label htmlFor="category_desc" className="text-sm font-medium mb-1">
@@ -64,6 +93,9 @@ const AddCategory = () => {
             value={formData.category_desc}
             className="border border-gray-300 rounded-lg p-2"
           />
+          {errors.category_desc && (
+            <p className="text-red-500 text-sm mt-1">{errors.category_desc}</p>
+          )}
         </div>
         <button
           type="submit"

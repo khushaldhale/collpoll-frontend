@@ -44,6 +44,7 @@ import AllStudents from './components/student/AllStudents';
 import AllEmployees from './components/admin/AllEmployees';
 import Feedback from './components/student/feedback/Feedback';
 import InstructorFeedback from './components/admin/InstructorFeedback';
+import AllCourses from './components/counselling/AllCourses';
 
 function App() {
   return (
@@ -82,6 +83,7 @@ function App() {
           <Route path="/dashboard/counsellor" element={<CounsellorDashBoard />}>
             <Route path="pending/counselling" element={<PendingCounselling />} />
             <Route path="performance" element={<CounsellorPerformance />} />
+            <Route path='courses' element={<AllCourses></AllCourses>}> </Route>
           </Route>
           <Route path="/dashboard/instructor" element={<InstructorDashBoard />}>
             <Route path="batches" element={<InstructoBatches />} />

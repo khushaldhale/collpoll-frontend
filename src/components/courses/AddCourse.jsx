@@ -104,6 +104,7 @@ const AddCourse = () => {
 
   function submitHandler(event) {
     event.preventDefault();
+
     const newErrors = {
       course_name: validateField("course_name", formData.course_name),
       course_desc: validateField("course_desc", formData.course_desc),
@@ -118,6 +119,10 @@ const AddCourse = () => {
       ),
     };
 
+    // we are validating our basic form , does  it contain errors or not
+    const isFormError = !Object.values(newErrors).some((error) => error);
+    // we have validated installments also, later in the code
+
     // Validate installments if needed
     if (formData.isInstallment) {
       const installmentErrors = formData.installments.map((installment) => ({
@@ -127,14 +132,15 @@ const AddCourse = () => {
       newErrors.installments = installmentErrors;
     }
 
-    setErrors(newErrors);
+    setErrors(newErrors); // this is having all keys for installmnets
 
     // Check if there are no errors before dispatching
     if (
-      !Object.values(newErrors).some((error) => error) &&
+      isFormError &&
       (!formData.isInstallment ||
         !newErrors.installments.some((e) => e.amount || e.due_day))
     ) {
+      console.log("API calling ");
       dispatch(createCourse({ ...formData, categoryId })).then((data) => {
         if (data.payload.success) {
           navigate(-1);

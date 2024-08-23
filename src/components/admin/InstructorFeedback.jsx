@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  deleteFeedbacksViaBatch,
   feedbacksViaBatch,
   instructorPerformanceViaBatch,
 } from "../../redux/slices/feedbackSlice";
 import { getAllInstructor } from "../../redux/slices/instructorSlice";
 import { batchesByInstructorId } from "../../redux/slices/batchSlice";
-
+import { subByCourse } from "../../redux/slices/subjectSlice";
 const InstructorFeedback = () => {
   const feedbacks_via_Batch = useSelector(
     (state) => state.feedback.feedbackByBatch
@@ -15,11 +16,14 @@ const InstructorFeedback = () => {
   const instructorBatches = useSelector(
     (state) => state.batch.instructorBatches
   );
+
+  const subViaCourse = useSelector((state) => state.subject.subByCourse);
   const performance = useSelector((state) => state.feedback.performance);
 
   const [formData, setFormData] = useState({
     instructorId: "",
     batchId: "",
+    subject: "",
   });
 
   const dispatch = useDispatch();
@@ -38,7 +42,21 @@ const InstructorFeedback = () => {
     if (name === "instructorId") {
       dispatch(batchesByInstructorId({ instructorId: value })).then((data) => {
         if (data.payload.success) {
-          console.log("Instructor batches are fetched");
+          console.log("Instructor batches are fetched", data.payload.data);
+        }
+      });
+    }
+
+    if (name === "batchId") {
+      const selectedIndex = event.target.selectedIndex;
+      const selectedOption = event.target.options[selectedIndex];
+      const course_id = selectedOption.getAttribute("data-course");
+      console.log(course_id);
+
+      dispatch(subByCourse({ courseId: course_id })).then((data) => {
+        if (data.payload.success) {
+          console.log("all subjects are fetched");
+          console.log(data.payload.data);
         }
       });
     }
@@ -110,11 +128,17 @@ const InstructorFeedback = () => {
             <option value="">Select any batch</option>
             {instructorBatches.length > 0 &&
               instructorBatches.map((element) => (
-                <option key={element._id} value={element._id}>
+                <option
+                  key={element._id}
+                  value={element._id}
+                  data-course={element.course._id}
+                >
                   {element.batch_name}
                 </option>
               ))}
           </select>
+
+          {/*  provide subjects and topic as well , then fetch */}
         </div>
 
         <button
@@ -125,11 +149,44 @@ const InstructorFeedback = () => {
         </button>
       </form>
 
+      {/* feedback deletion should be done separately */}
+
+      {/*  feedback deletion code  */}
+      {/*  also provide subject and topic ID  */}
+      {/* {feedbacks_via_Batch.length > 0 && (
+        <button
+          className="border p-2"
+          onClick={() => {
+            dispatch(deleteFeedbacksViaBatch(formData)).then((data) => {
+              if (data.payload.success) {
+                console.log("All feedbacks of this batch are deleted");
+              }
+            });
+          }}
+        >
+          Delete Following Feedbacks
+        </button>
+      )} */}
+
       {performance && (
         <div className="bg-white shadow-md rounded-lg p-6 mb-6">
           <h3 className="text-lg font-semibold mb-2">Performance</h3>
           <p className="text-gray-700">Average Rating: {performance}</p>
         </div>
+      )}
+      {feedbacks_via_Batch.length > 0 && <p>filter subjects via subject</p>}
+
+      {feedbacks_via_Batch.length > 0 && (
+        <select name="subject" id="subject" onChange={changeHandler}>
+          <option> select any sub</option>
+          {subViaCourse.map((element) => {
+            return (
+              <option id={element._id} value={element._id}>
+                {element.sub_name}
+              </option>
+            );
+          })}
+        </select>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
